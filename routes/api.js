@@ -1,4 +1,6 @@
-var events = require('monument').events;
+var events = require('monument').events
+	, parser = require('monument').parser
+	, crypto = require('crypto');
 
 
 events.on('route:/api:get', function (connection) {
@@ -14,17 +16,29 @@ events.on('route:/api/v1/:app:get', function (connection) {
 		if(data === null){
 			data = [];
 		}
-		
+
 		connection.res.send(data);
 	});
 
-	events.emit('data:get:all', {key: connection.params.key});
+	events.emit('data:get:all', {key: connection.params.app});
 });
 
 events.on('route:/api/v1/:app:post', function (connection) {
 	'use strict';
+	var hash = crypto.createHash('sha1')
+		, id;
 	
-	connection.res.send('route /api/v1/:app now responding to post requests');
+	parser(connection, function (body) {
+		id = hash.update(JSON.stringify(body)).digest('hex');
+
+		events.once('data:saved:' + id, function (data) {
+			connection.res.send(data);
+		});
+
+		//add a typecheck here before proceeding...
+		events.emit('data:new', body);
+	});
+
 });
 
 events.on('route:/api/v1/:app/:id:get', function (connection) {
