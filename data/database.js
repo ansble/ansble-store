@@ -7,3 +7,9 @@ events.on('data:get:all', function (input) {
 	
 	return input;
 });
+
+events.on('data:new', function (input) {
+	'use strict';
+
+	events.emit('data:saved:' + input.id, input.data);
+});

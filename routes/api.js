@@ -36,7 +36,7 @@ events.on('route:/api/v1/:app:post', function (connection) {
 		});
 
 		//add a typecheck here before proceeding...
-		events.emit('data:new', body);
+		events.emit('data:new', {key: connection.params.app, id: id, data:body});
 	});
 
 });
