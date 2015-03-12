@@ -1,12 +1,6 @@
 {
 	"/": ["get"],
-	"/:id": ["get"],
-	"/about": ["get"],
-	"/stuff": ["get"],
-	"/search": ["get"],
 	"/api": ["get"],
-	"/api/articles": ["get"],
-	"/api/articles/:id": ["get"],
-	"/api/search": ["get"],
-	"/rss": ["get"]
+	"/api/:app": ["get", "post"],
+	"/api/:app/:id": ["get", "put"]
 }
