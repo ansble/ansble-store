@@ -1,0 +1,39 @@
+{
+  "name": "designfrontier-website",
+  "version": "2.0.1",
+  "description": "dsignfrontier.net: website and playground for Daniel Sellers",
+  "main": "app.js",
+  "dependencies": {
+    "bower": "^1.3.12",
+    "monument": "^1.4.2",
+    "rss": "^1.1.1"
+  },
+  "devDependencies": {
+    "gulp": "^3.6.2",
+    "gulp-concat": "^2.2.0",
+    "gulp-declare": "^0.2.0",
+    "gulp-define-module": "^0.1.1",
+    "gulp-handlebars": "^2.1.0",
+    "gulp-hogan-compile": "^0.2.1",
+    "gulp-jshint": "^1.5.5",
+    "gulp-plumber": "^0.6.1",
+    "gulp-rename": "^1.2.0",
+    "gulp-sass": "^1.3.3",
+    "gulp-sourcemaps": "^1.4.0",
+    "gulp-uglify": "^0.2.1",
+    "gulp-watch": "^0.6.4",
+    "nodetime": "^0.8.15",
+    "yargs": "^1.2.5"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": "gulp test",
+    "postinstall": "bower install"
+  },
+  "author": "Daniel Sellers",
+  "repository": "https://github.com/designfrontier/dfredesign.git",
+  "license": "MIT",
+  "engines": {
+    "node": "0.12.x"
+  }
+}

@@ -1,0 +1,12 @@
+{
+	"/": ["get"],
+	"/:id": ["get"],
+	"/about": ["get"],
+	"/stuff": ["get"],
+	"/search": ["get"],
+	"/api": ["get"],
+	"/api/articles": ["get"],
+	"/api/articles/:id": ["get"],
+	"/api/search": ["get"],
+	"/rss": ["get"]
+}

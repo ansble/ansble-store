@@ -1,0 +1,20 @@
+{{#def._head}}
+{{#def._header}}
+	<article class="article">
+		<h2 class="article__heading">
+			Search Results: {{= it.query }}
+		</h2>
+		{{~ it.matches :value:index }}
+			<section class="search__result">
+				<h3 class="search__result__heading">
+					<a href="/{{= value.id }}">{{= value.title }}</a>
+				</h3>
+				<span class="search__meta">Published: {{= value.publishedDate }}</span>
+				<p class="search__blurb">
+					{{= value.content.slice(0, 200) }}&hellip; [<a href="/{{= value.id }}">more</a>]
+				</p>
+			</section>
+		{{~}}
+	</article>
+{{#def._footer}}
+{{#def._foot}}

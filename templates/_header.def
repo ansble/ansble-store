@@ -1,0 +1,17 @@
+<nav class="header">
+	<h1 class="header__logo">designfrontier</h1>
+	<ul class="header__nav">
+		<li>
+			<a href="/" class="header__nav__item">home</a>
+		</li>
+		<li>
+			<a href="/about" class="header__nav__item">about</a>
+		</li>
+		<li>
+			<a href="/stuff" class="header__nav__item">stuff</a>
+		</li>
+		<li>
+			<input type="search" name="search" class="header__search" placeholder="search"/>
+		</li>
+	</ul>
+</nav>

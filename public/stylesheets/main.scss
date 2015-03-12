@@ -1,0 +1,27 @@
+@import './colors';
+@import '../lib/normalize.css/normalize';
+@import '../lib/highlightjs/styles/ascetic.scss';
+@import '../fonts/fonts';
+@import '../components/article/article';
+@import '../components/header/header';
+@import '../components/footer/footer';
+@import '../components/search/search';
+
+body {
+	font-family: 'helvetica' sans-serif;
+	font-size: 16px;
+	line-height: 1.6;
+
+	padding: 0 2em;
+	color: $main--text;
+	background: $main--background;
+}
+
+a {
+	color: $main--accent;
+	text-decoration: none;
+}
+
+a:hover {
+	border-bottom: 1px solid $main--accent;
+}

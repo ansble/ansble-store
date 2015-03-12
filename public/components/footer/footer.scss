@@ -1,0 +1,60 @@
+.footer {
+	background: $main--accent;
+	max-height: 6.554rem;
+
+	color: $light--text;
+	position: relative;
+
+	margin-left: -2rem;
+	margin-right: -2rem;
+
+	padding: 2.560rem 1rem;
+
+	display: flex;
+	flex-wrap: nowrap;
+	flex-flow: row wrap;
+
+	margin-top:2.560rem;
+	
+	&__nav__link {
+		color: $main--background;
+		text-decoration: none;
+	}
+
+	&__nav__api {
+		padding-right:2rem;
+	}
+	
+	&__nav {
+
+		&--next {
+			padding: 0 .625rem;
+			border-right: 1px solid $main--background;
+		}
+
+		&--previous {
+			padding: 0 .625rem;
+			border-left: 1px solid $main--background;
+		}
+
+		&--copyright {
+			padding: 0 .625rem;
+			flex-grow: 2;
+		}
+
+		@media screen and (min-width: 21em){
+			&--next {
+				padding: 0 2rem;
+			}
+
+			&--previous {
+				padding: 0 2rem;
+			}
+
+			&--copyright {
+				padding: 0 2rem;
+				flex-grow: 2;
+			}
+		}
+	}
+}
