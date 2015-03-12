@@ -1,7 +1,6 @@
 var monument = require('monument');
 
-require('./data/articles');
-require('./data/about');
+require('./data/database');
 
 monument.server({
 				routePath: './routes'
