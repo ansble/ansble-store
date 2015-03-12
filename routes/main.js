@@ -1,26 +1,12 @@
-var events = require('monument').events
-	, articleTemplate = require('../templates/article');
+var events = require('monument').events;
 
 events.on('route:/:get', function (connection) {
 	'use strict';
 	
-	events.once('data:set:article:latest', function (article) {
-		connection.res.send(articleTemplate(article));
+	events.once('data:set:article:latest', function () {
+
+		connection.res.send('ansble is runnning here');
 	});
 
 	events.emit('data:get:article:latest');
-});
-
-events.on('route:/:id:get', function (connection) {
-	'use strict';
-
-	events.once('data:set:article:' + connection.params.id, function (article) {
-		if(typeof article !== 'undefined'){
-			connection.res.send(articleTemplate(article));
-		} else {
-			events.emit('error:404', connection);
-		}
-	});
-
-	events.emit('data:get:articles', connection.params.id);
 });
