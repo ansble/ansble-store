@@ -1,6 +1,6 @@
 {
 	"/": ["get"],
 	"/api": ["get"],
-	"/api/:app": ["get", "post"],
-	"/api/:app/:id": ["get", "put"]
+	"/api/v1/:app": ["get", "post"],
+	"/api/v1/:app/:id": ["get", "put"]
 }
