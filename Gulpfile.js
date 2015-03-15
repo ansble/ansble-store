@@ -15,6 +15,11 @@ var gulp = require('gulp')
     , declare = require('gulp-declare')
 
     , cp = require('child_process')
+    
+    //for restarting node on server file changes...
+    , spawn = require('child_process').spawn
+    , node
+
     , argv = require('yargs').argv
 
     , pkg = require('./package.json');
@@ -30,6 +35,22 @@ gulp.task('default', ['localBuild'], function(){
                 , 'public/javascripts/components/**/*-template.html'
             ], function(){
         gulp.run('localBuild');
+    });
+});
+
+gulp.task('server', function() {
+    'use strict';
+
+    if (node) {
+        node.kill();
+    }
+    
+    node = spawn('node', ['app.js'], {stdio: 'inherit'});
+
+    node.on('close', function (code) {
+        if (code === 8) {
+          gulp.log('Error detected, waiting for changes...');
+        }
     });
 });
 
@@ -96,13 +117,28 @@ gulp.task('build:prod', ['buildTemplates', 'localBuild'], function(){
         .pipe(gulp.dest('public/javascripts/built/'));
 });
 
-gulp.task('dev', function () {
+gulp.task('dev', ['server'], function () {
     'use strict';
     
+    // gulp.watch([
+    //             './public/stylesheets/main.scss'
+    //             , './public/stylesheets/colors.scss'
+    //             , './public/fonts/fonts.scss'
+    //             , './public/components/**/*.scss'
+    //         ], ['sass']);
+
     gulp.watch([
-                './public/stylesheets/main.scss'
-                , './public/stylesheets/colors.scss'
-                , './public/fonts/fonts.scss'
-                , './public/components/**/*.scss'
-            ], ['sass']);
+            '!templates/*.js'
+            , '!public/**/*.js'
+            , '!node_modules/**/*.js'
+            , '**/*.js'
+        ], ['server']);
+});
+
+process.on('exit', function() {
+    'use strict';
+
+    if (node) {
+        node.kill();
+    }
 });

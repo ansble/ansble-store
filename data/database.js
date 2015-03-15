@@ -3,14 +3,14 @@ var events = require('monument').events;
 events.on('data:get', function (input) {
 	'use strict';
 
-	events.emit('data:set:' + input.app + ':' + input.id, null);
+	events.emit('data:set:' + input.app + ':' + input.id, {'katie': 'the best wife ever!'});
 	
 });
 
 events.on('data:get:all', function (input) {
 	'use strict';
 
-	events.emit('data:set:all:' + input.key, null);
+	events.emit('data:set:all:' + input.key, [{'katie': 'the best wife ever!'}]);
 	
 });
 

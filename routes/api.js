@@ -14,10 +14,11 @@ events.on('route:/api/v1/:app:get', function (connection) {
 	
 	events.once('data:set:all:' + connection.params.app, function (data) {
 		if(data === null){
-			data = [];
+			events.emit('error:404', connection);
+		} else {
+			connection.res.send(data);
 		}
 
-		connection.res.send(data);
 	});
 
 	events.emit('data:get:all', {key: connection.params.app});

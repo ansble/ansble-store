@@ -16,7 +16,7 @@ var monthArray = [
 
 		var dateObj = new Date(dateString);
 
-		return dateObj.getDate() + ' ' + monthArray[dateObj.getMonth()] + ' ' + dateObj.getFullYear();
+		return dateObj.getDate() + ' ' + monthArray[dateObj.getMonth() - 1] + ' ' + dateObj.getFullYear();
 	};
 
 module.exports = {
