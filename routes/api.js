@@ -25,11 +25,10 @@ events.on('route:/api/v1/:app:get', function (connection) {
 
 events.on('route:/api/v1/:app:post', function (connection) {
 	'use strict';
-	var hash = crypto.createHash('sha1')
-		, id;
+	var id;
 	
 	parser(connection, function (body) {
-		id = hash.update(JSON.stringify(body)).digest('hex');
+		id = crypto.createHash('sha1').update(JSON.stringify(body)).digest('hex');
 
 		events.once('data:saved:' + id, function (data) {
 			connection.res.send(data);
@@ -44,11 +43,26 @@ events.on('route:/api/v1/:app:post', function (connection) {
 events.on('route:/api/v1/:app/:id:get', function (connection) {
 	'use strict';
 	
-	connection.res.send('route /api/v1/:app/:id now responding to get requests');
+	events.once('data:set:' + connection.params.app + ':' + connection.params.id, function (data) {
+		if(data === null){
+			events.emit('error:404', connection);
+		} else {
+			connection.res.send(data);
+		}
+	});
+
+	events.emit('data:get', connection.params);
 });
 
 events.on('route:/api/v1/:app/:id:put', function (connection) {
 	'use strict';
 	
-	connection.res.send('route /api/v1/:app/:id now responding to put requests');
+	parser(connection, function (body) {
+		events.once('data:saved:' + connection.params.id, function (data) {
+			connection.res.send(data);
+		});
+
+		//add a typecheck here before proceeding...
+		events.emit('data:update', {key: connection.params.app, id: connection.params.id, data:body});
+	});
 });
