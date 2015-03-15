@@ -8,6 +8,8 @@ var gulp = require('gulp')
     , sass = require('gulp-sass')
     , sourcemaps = require('gulp-sourcemaps')
 
+    , mocha = require('gulp-mocha')
+
     , handlebars = require('gulp-handlebars')
     , defineModule = require('gulp-define-module')
     , declare = require('gulp-declare')
@@ -34,6 +36,8 @@ gulp.task('default', ['localBuild'], function(){
 gulp.task('test', function (){
     'use strict';
 
+    return gulp.src(['**/**_test.js', '!node_modules/**/*'], {read: false})
+            .pipe(mocha({reporter: 'spec'}));
 });
 
 gulp.task('localBuild', ['buildTemplates'], function(){
