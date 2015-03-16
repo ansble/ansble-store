@@ -10,7 +10,7 @@ events.on('data:get', function (input) {
 events.on('data:get:all', function (input) {
 	'use strict';
 
-	events.emit('data:set:all:' + input.key, [{'katie': 'the best wife ever!'}]);
+	events.emit('data:set:all:' + input.key, [{'Katie': 'the best wife ever!'}, {'Gabe': 'the best brother ever!'}]);
 	
 });
 

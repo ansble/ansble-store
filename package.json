@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "chai": "^2.1.1",
-    "gulp": "^3.6.2",
+    "gulp": "^3.8.11",
     "gulp-concat": "^2.2.0",
     "gulp-declare": "^0.2.0",
     "gulp-define-module": "^0.1.1",
@@ -24,7 +24,6 @@
     "gulp-sourcemaps": "^1.4.0",
     "gulp-uglify": "^0.2.1",
     "gulp-util": "^3.0.4",
-    "gulp-watch": "^0.6.4",
     "nodetime": "^0.8.15",
     "yargs": "^1.2.5"
   },
