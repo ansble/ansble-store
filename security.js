@@ -2,6 +2,12 @@ var jwt = require('jsonwebtoken')
 	, events = require('monument').events
 	, fs = require('fs')
 	, schema = require('./data/schemas')
+	, salt = 'it was the best of times it was the worst of times. It was the age of reason...'
+	, crypto = require('crypto')
+
+	, createJTI = function(){
+		return 
+	};
 	, key;
 
 //import the public key for this environment
@@ -35,7 +41,10 @@ events.on('token:verify', function (token) {
 events.on('token:create', function (dataIn) {
 	'use strict';
 
-	var token;
+	var token
+		, hash = crypto.createHash('sha1');
+
+	dataIn.jti = hash.update(createJTI()).digest('hex');
 
 	if(schema.check(schema.jwt, dataIn)){
 		token = jwt.sign(dataIn, key, { algorithm: 'RS256'});

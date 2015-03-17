@@ -1,5 +1,6 @@
 var jwtSchema = {
 		scopes: 'array'
+		, app: 'string'
 		, jti: 'string'
 	}
 	, schemaCheck = function (objectIn, schemaIn) {
