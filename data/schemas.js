@@ -3,6 +3,26 @@ var jwtSchema = {
 		, app: 'string'
 		, jti: 'string'
 	}
+
+	, app = {
+		key: 'string'
+		, createdDate: 'date'
+		, contact: 'object'
+		, payment: 'object'
+		, url: 'string'
+	}
+
+	, contact = {
+		name: 'string'
+		, email: 'string'
+		, phone: 'string'
+	}
+
+	, payment = {
+		token: 'string'
+		, expires: 'date'
+	}
+
 	, schemaCheck = function (objectIn, schemaIn) {
 		'use strict';
 		var check = true
@@ -26,5 +46,8 @@ var jwtSchema = {
 
 module.exports = {
 	jwt: jwtSchema
+	, account: app
+	, contact: contact
+	, payment:payment
 	, check: schemaCheck
 };
