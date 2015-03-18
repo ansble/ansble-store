@@ -117,21 +117,23 @@ gulp.task('build:prod', ['buildTemplates', 'localBuild'], function(){
         .pipe(gulp.dest('public/javascripts/built/'));
 });
 
-gulp.task('dev', ['server'], function () {
+gulp.task('dev', ['server', 'sass'], function () {
     'use strict';
     
-    // gulp.watch([
-    //             './public/stylesheets/main.scss'
-    //             , './public/stylesheets/colors.scss'
-    //             , './public/fonts/fonts.scss'
-    //             , './public/components/**/*.scss'
-    //         ], ['sass']);
+    gulp.watch([
+                './public/stylesheets/main.scss'
+                , './public/stylesheets/colors.scss'
+                , './public/fonts/fonts.scss'
+                , './public/components/**/*.scss'
+            ], ['sass']);
 
     gulp.watch([
             '!templates/*.js'
             , '!public/**/*.js'
             , '!node_modules/**/*.js'
             , '**/*.js'
+            , 'templates/*.jst'
+            , 'templates/*.def'
         ], ['server']);
 });
 

@@ -320,28 +320,6 @@ table {
 td, th {
   padding: 0; }
 
-/*
-
-Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiacs.Org>
-
-*/
-.hljs {
-  display: block;
-  overflow-x: auto;
-  padding: 0.5em;
-  background: white;
-  color: black;
-  -webkit-text-size-adjust: none; }
-
-.hljs-string, .hljs-tag .hljs-value, .hljs-filter .hljs-argument, .hljs-addition, .hljs-change, .apache .hljs-tag, .apache .hljs-cbracket, .nginx .hljs-built_in, .tex .hljs-formula {
-  color: #888; }
-
-.hljs-comment, .hljs-shebang, .hljs-doctype, .hljs-pi, .hljs-javadoc, .hljs-deletion, .apache .hljs-sqbracket {
-  color: #ccc; }
-
-.hljs-keyword, .hljs-tag .hljs-title, .ini .hljs-title, .lisp .hljs-title, .http .hljs-title, .nginx .hljs-title, .css .hljs-tag, .hljs-winutils, .hljs-flow, .apache .hljs-tag, .tex .hljs-command, .hljs-request, .hljs-status {
-  font-weight: bold; }
-
 @font-face {
   font-family: 'League Spartan';
   src: url('/fonts/leaguespartan-bold.eot');
@@ -365,43 +343,43 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 .header__logo {
   font-size: 1rem;
-  color: #559acb;
+  color: #f2506e;
   cursor: pointer; }
 .header__nav {
   display: none; }
   .header__nav__item {
     padding-bottom: .625rem; }
 .header__nav__item, .header__nav__item:hover, .header__nav__item:visited {
-  color: white;
+  color: #f2f2f2;
   text-decoration: none;
   padding-bottom: .625rem; }
 .header[open] {
-  background: #559acb;
-  color: white;
+  background: #f2506e;
+  color: #f2f2f2;
   padding: 2rem 2rem .625rem;
   margin: -2rem -2rem 1rem -2rem;
   box-shadow: inset 0 -1px 3px rgba(0, 0, 0, 0.2); }
 [open] .header__logo {
   font-size: 1rem;
-  color: white; }
+  color: #f2f2f2; }
 [open] .header__nav {
   list-style: none;
   display: block;
   padding: 0; }
 [open] .header__search {
-  background: #3881b5;
-  border: 1px solid #7cb1d7;
+  background: #ee2147;
+  border: 1px solid #f67f95;
   padding: .625rem;
   min-width: 15rem;
   box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.2);
   outline: none; }
 [open] .header__search::-webkit-input-placeholder {
-  color: #cae0ef; }
+  color: #fddee4; }
 
 .footer {
-  background: #559acb;
+  background: #f2506e;
   max-height: 6.554rem;
-  color: white;
+  color: #f2f2f2;
   position: relative;
   margin-left: -2rem;
   margin-right: -2rem;
@@ -411,16 +389,16 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
   flex-flow: row wrap;
   margin-top: 2.56rem; }
   .footer__nav__link {
-    color: white;
+    color: #f2f2f2;
     text-decoration: none; }
   .footer__nav__api {
     padding-right: 2rem; }
   .footer__nav--next {
     padding: 0 .625rem;
-    border-right: 1px solid white; }
+    border-right: 1px solid #f2f2f2; }
   .footer__nav--previous {
     padding: 0 .625rem;
-    border-left: 1px solid white; }
+    border-left: 1px solid #f2f2f2; }
   .footer__nav--copyright {
     padding: 0 .625rem;
     flex-grow: 2; }
@@ -447,15 +425,15 @@ body {
   font-size: 16px;
   line-height: 1.6;
   padding: 0 2em;
-  color: #3c3c3c;
-  background: white; }
+  color: #202940;
+  background: #f2f2f2; }
 
 a {
-  color: #559acb;
+  color: #f2506e;
   text-decoration: none; }
 
 a:hover {
-  border-bottom: 1px solid #559acb; }
+  border-bottom: 1px solid #f2506e; }
 
 
 /*# sourceMappingURL=maps/main.css.map */

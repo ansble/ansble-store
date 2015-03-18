@@ -20,7 +20,7 @@ var crypto = require('crypto')
 		return dateObj.getDate() + ' ' + monthArray[dateObj.getMonth() - 1] + ' ' + dateObj.getFullYear();
 	}
 
-	, generateJTI = function(salt){
+	, generateID = function(salt){
 		'use strict';
 
 		var randString = crypto.randomBytes(48).toJSON().data.join('')
@@ -31,5 +31,5 @@ var crypto = require('crypto')
 
 module.exports = {
 	formatDate: formatDate
-	, createJTI: generateJTI
+	, generateID: generateID
 };

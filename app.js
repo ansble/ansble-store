@@ -8,5 +8,5 @@ monument.server({
 				, templatePath: './templates'
 				, publicPath: './public'
 				, port: process.env.PORT || 3002
-				, compress: (process.env.NODE_ENV && process.env.NODE_ENV ===  'production')
+				, compress: false && (process.env.NODE_ENV && process.env.NODE_ENV ===  'production')
 			});

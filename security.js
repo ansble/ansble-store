@@ -3,7 +3,7 @@ var jwt = require('jsonwebtoken')
 	, fs = require('fs')
 	, schema = require('./data/schemas')
 	, salt = 'it was the best of times it was the worst of times. It was the age of reason...'
-	, createJTI = require('./utils').createJTI
+	, createJTI = require('./utils').generateID
 	, key;
 
 //import the public key for this environment
@@ -29,6 +29,7 @@ events.on('token:verify', function (token) {
 		if(err){
 			console.log(err);
 		} else {
+			console.log(decoded);
 			events.emit('token:verify:' + token, decoded);
 		}
 	});
@@ -37,17 +38,19 @@ events.on('token:verify', function (token) {
 events.on('token:create', function (dataIn) {
 	'use strict';
 
-	var token;
+	var token
+		, id = JSON.stringify(dataIn);
 
+	//check to see if this app already has a key... and then do stuff
 	dataIn.jti = createJTI(salt);
-
-	if(schema.check(schema.jwt, dataIn)){
+	
+	if(schema.check(dataIn, schema.jwt)){
 		token = jwt.sign(dataIn, key, { algorithm: 'RS256'});
 	} else {
 		token = 'invalid';
 	}
 
-	events.emit('token:created:' + JSON.stringify(dataIn), token);
+	events.emit('token:created:' + id, token);
 });
 
 events.on('token:destroy', function () {

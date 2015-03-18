@@ -1,12 +1,29 @@
 var events = require('monument').events
 	, parser = require('monument').parser
-	, crypto = require('crypto');
+	, crypto = require('crypto')
+	, getID = require('../utils').generateID
+
+	, apiTemplate = require('../templates/api');
 
 
 events.on('route:/api:get', function (connection) {
 	'use strict';
 	
-	connection.res.send('route /api now responding to get requests');
+	connection.res.send(apiTemplate());
+});
+
+events.on('route:/api:post', function (connection) {
+	'use strict';
+	var tokenReq = {
+		app: getID('this is cool')
+		, scopes: []
+	};
+
+	events.on('token:created:' + JSON.stringify(tokenReq), function (token) {
+		connection.res.send(token);
+	});
+
+	events.emit('token:create', tokenReq);
 });
 
 events.on('route:/api/v1/:app:get', function (connection) {

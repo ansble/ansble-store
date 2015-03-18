@@ -32,9 +32,10 @@ var jwtSchema = {
 		//must have the same number of keys
 		check = check && schemaKeys.length === objectKeys.length;
 
+
 		//and all the keys must match in name and type
 		schemaKeys.forEach( function (key) {
-			if(schemaIn[key === 'array']){
+			if(schemaIn[key] === 'array'){
 				check = check && typeof objectIn[key] === 'object' && Array.isArray(objectIn[key]);
 			} else {
 				check = check && typeof objectIn[key] === schemaIn[key];

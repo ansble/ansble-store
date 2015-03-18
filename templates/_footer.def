@@ -1,18 +1,8 @@
 <footer class="footer">
-	{{? it.next }}
-	<div class="footer__nav--next">
-		<a href="/{{= it.next }}" class="footer__nav__link">next</a>
-	</div>
-	{{?}}
 	<section class="footer__nav--copyright">
-		&copy; 2015 Daniel Sellers
+		&copy; 2015 ansble llc
 	</section>
 	<section class="footer__nav__api">
-		<a href="/rss" class="footer__nav__link">rss</a>/<a href="/api" class="footer__nav__link">api</a>
+		<a href="/api" class="footer__nav__link">api</a>
 	</section>
-	{{? it.prev }}
-	<div class="footer__nav--previous">
-		<a href="/{{= it.prev }}" class="footer__nav__link">prev</a>
-	</div>
-	{{?}}
 </footer>

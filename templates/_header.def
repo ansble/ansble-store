@@ -1,5 +1,5 @@
 <nav class="header">
-	<h1 class="header__logo">designfrontier</h1>
+	<h1 class="header__logo">ansble</h1>
 	<ul class="header__nav">
 		<li>
 			<a href="/" class="header__nav__item">home</a>
@@ -8,10 +8,10 @@
 			<a href="/about" class="header__nav__item">about</a>
 		</li>
 		<li>
-			<a href="/stuff" class="header__nav__item">stuff</a>
+			<a href="/api" class="header__nav__item">api</a>
 		</li>
 		<li>
-			<input type="search" name="search" class="header__search" placeholder="search"/>
+			<a href="/docs" class="header__nav__item">docs</a>
 		</li>
 	</ul>
 </nav>
