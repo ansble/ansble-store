@@ -3,16 +3,7 @@ var jwt = require('jsonwebtoken')
 	, fs = require('fs')
 	, schema = require('./data/schemas')
 	, salt = 'it was the best of times it was the worst of times. It was the age of reason...'
-	, crypto = require('crypto')
-
-	, createJTI = function(salt){
-		'use strict';
-
-		var randString = crypto.randomBytes(48).toJSON().data.join('')
-			, jti = crypto.createHash('sha1');
-
-		return jti.update(salt + new Date().getTime() + randString).digest('hex');
-	}
+	, createJTI = require('./utils').createJTI
 	, key;
 
 //import the public key for this environment

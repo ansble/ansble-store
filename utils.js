@@ -1,4 +1,5 @@
-var monthArray = [
+var crypto = require('crypto')
+	, monthArray = [
 		'Jan'
 		, 'Feb'
 		, 'Mar'
@@ -17,8 +18,18 @@ var monthArray = [
 		var dateObj = new Date(dateString);
 
 		return dateObj.getDate() + ' ' + monthArray[dateObj.getMonth() - 1] + ' ' + dateObj.getFullYear();
+	}
+
+	, generateJTI = function(salt){
+		'use strict';
+
+		var randString = crypto.randomBytes(48).toJSON().data.join('')
+			, jti = crypto.createHash('sha1');
+
+		return jti.update(salt + new Date().getTime() + randString).digest('hex');
 	};
 
 module.exports = {
 	formatDate: formatDate
+	, createJTI: generateJTI
 };
