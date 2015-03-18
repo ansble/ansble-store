@@ -3,27 +3,37 @@ var events = require('monument').events
 	, crypto = require('crypto')
 	, getID = require('../utils').generateID
 
+	, schema = require('../data/schemas')
+
 	, apiTemplate = require('../templates/api');
 
 
 events.on('route:/api:get', function (connection) {
 	'use strict';
-	
+
 	connection.res.send(apiTemplate());
 });
 
 events.on('route:/api:post', function (connection) {
 	'use strict';
-	var tokenReq = {
-		app: getID('this is cool')
-		, scopes: []
-	};
 
-	events.on('token:created:' + JSON.stringify(tokenReq), function (token) {
-		connection.res.send(token);
+	parser(connection, function (body) {
+		body.key = getID();
+		body.createdDate = new Date();
+
+		events.once('token:created:' + JSON.stringify(body), function (token) {
+			connection.res.send(token);
+		});
+
+		//validate the body
+		if(schema.check(body, schema.app)){
+			events.emit('token:create', body);
+		} else {
+			//error... not an app
+			events.emit('error:404', connection);
+		}
+
 	});
-
-	events.emit('token:create', tokenReq);
 });
 
 events.on('route:/api/v1/:app:get', function (connection) {

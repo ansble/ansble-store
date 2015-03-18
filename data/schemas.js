@@ -10,6 +10,8 @@ var jwtSchema = {
 		, contact: 'object'
 		, payment: 'object'
 		, url: 'string'
+		, name: 'string'
+		, description: 'string'
 	}
 
 	, contact = {
