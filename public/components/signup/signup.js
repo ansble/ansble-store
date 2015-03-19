@@ -1,4 +1,4 @@
-(function (doc) {
+(function (doc, win) {
 	'use strict';
 
 	var submit = doc.querySelector('.signup__submit')
@@ -9,7 +9,9 @@
 			, description: doc.querySelector('[name="what"]')
 			, phone: doc.querySelector('[name="phone"]')
 			, email: doc.querySelector('[name="email"]')
-		};
+		}
+		, modal = doc.querySelector('.modal')
+		, modalContent = doc.querySelector('.modal__content');
 
 	submit.addEventListener('click', function (evnt) {
 		//gather the form and submit it
@@ -30,12 +32,15 @@
 
 		//post to the server
 		server.addEventListener('load', function () {
+			var res = JSON.parse(server.response);
+
 			if(server.response !== 'exists'){
 				//good token
-				console.log(server.response);
+				modal.setAttribute('open','');
+				modalContent.innerHTML = win.auth(res);
 			} else {
 				//you already created this app
-				
+
 			}
 		});
 		server.open('POST', '/api');
@@ -45,4 +50,4 @@
 		evnt.preventDefault();
 		evnt.stopPropagation();
 	});
-})(document);
+})(document, window);

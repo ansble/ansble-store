@@ -1,4 +1,5 @@
 		<script src="/components/signup/signup.js"></script>
+		<script src="/templates"></script>
 		<script>
 			//google analytics goes here
 		</script>

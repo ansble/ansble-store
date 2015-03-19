@@ -1,5 +1,13 @@
-@import './colors';
 @import '../lib/normalize.css/normalize';
+
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+@import './colors';
 @import '../fonts/fonts';
 @import '../components/signup/signup';
 @import '../components/modal/modal';
