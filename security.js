@@ -55,7 +55,7 @@ MongoClient.connect(url, function(err, db) {
 
 		//check to see if this app already has a key... and then do stuff
 
-		console.log('new token requested', dataIn);
+		console.log('new token requested');
 		if(schema.check(dataIn, schema.account)){
 			dataIn.jti = createJTI(salt);
 			
@@ -63,10 +63,10 @@ MongoClient.connect(url, function(err, db) {
 				var store = {}
 					, update = {};
 
-				if(typeof docs[0] === 'undefined' || typeof docs[0][dataIn.app] === 'undefined'){
+				if(typeof docs[0] === 'undefined' || typeof docs[0][dataIn.key] === 'undefined'){
 					if(typeof docs[0] === 'undefined'){
 						store._id = 'application_store';
-						store[dataIn.app] = dataIn;
+						store[dataIn.key] = dataIn;
 						ansble.insert(store, function (err, result){
 							console.log(result);
 						});
@@ -83,7 +83,6 @@ MongoClient.connect(url, function(err, db) {
 
 					//TODO: if we ever use scopes change this
 					token = jwt.sign({scopes: [], app: dataIn.key, jti: dataIn.jti}, key, { algorithm: 'RS256'});
-					console.log(token);
 				} else {
 					token = 'exists';
 				}
@@ -99,7 +98,6 @@ MongoClient.connect(url, function(err, db) {
 
 	});
 
-	console.log('token handling events setup');
 	// insertDocuments(db, function() {
 	// db.close();
 	// });

@@ -1,0 +1,20 @@
+.modal {
+	display: none;
+
+	&[open] {
+		display: block;
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: $modal--background;
+	}
+
+	[open] &__content {
+		background: $main--background;
+		height: 100px;
+		width:300px;
+		box-shadow: 1px 1px 5px $modal--background;
+	}
+}

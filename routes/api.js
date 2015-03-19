@@ -25,12 +25,12 @@ events.on('route:/api:post', function (connection) {
 		body.payment = {};
 
 		events.once('token:created:' + body.key, function (token) {
+			console.log(body);
 			connection.res.send({auth: token, key: body.key});
 		});
 
 		//validate the body
 		if(schema.check(body, schema.account)){
-			console.log('requesting...');
 			events.emit('token:create', body);
 		} else {
 			//TODO: actually hook this up once the bug in parser is fixed
