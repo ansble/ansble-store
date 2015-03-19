@@ -18,19 +18,25 @@ events.on('route:/api:post', function (connection) {
 	'use strict';
 
 	parser(connection, function (body) {
-		body.key = getID();
+		body.key = getID(crypto.randomBytes(48).toJSON().data.join(''));
 		body.createdDate = new Date();
 
-		events.once('token:created:' + JSON.stringify(body), function (token) {
-			connection.res.send(token);
+		//TODO: add payment system
+		body.payment = {};
+
+		events.once('token:created:' + body.key, function (token) {
+			connection.res.send({auth: token, key: body.key});
 		});
 
 		//validate the body
-		if(schema.check(body, schema.app)){
+		if(schema.check(body, schema.account)){
+			console.log('requesting...');
 			events.emit('token:create', body);
 		} else {
-			//error... not an app
-			events.emit('error:404', connection);
+			//TODO: actually hook this up once the bug in parser is fixed
+			// console.log(body);
+			// //error... not an app
+			// events.emit('error:404', connection);
 		}
 
 	});

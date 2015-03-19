@@ -39,6 +39,8 @@ var jwtSchema = {
 		schemaKeys.forEach( function (key) {
 			if(schemaIn[key] === 'array'){
 				check = check && typeof objectIn[key] === 'object' && Array.isArray(objectIn[key]);
+			}else if (schemaIn[key] === 'date'){
+				check = check && typeof objectIn[key] === 'object' && !isNaN(new Date(objectIn[key]).getTime());
 			} else {
 				check = check && typeof objectIn[key] === schemaIn[key];
 			}

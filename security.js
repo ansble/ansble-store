@@ -31,6 +31,8 @@ MongoClient.connect(url, function(err, db) {
 	var ansble = db.collection('ansble')
 		, store = db.collection('store');
 
+	console.log('db connected');
+
 	if(err) {
 		events.emit('error:db', err);
 	}
@@ -49,13 +51,14 @@ MongoClient.connect(url, function(err, db) {
 
 	events.on('token:create', function (dataIn) {
 
-		var token
-			, id = JSON.stringify(dataIn);
+		var token;
 
 		//check to see if this app already has a key... and then do stuff
-		dataIn.jti = createJTI(salt);
-		
-		if(schema.check(dataIn, schema.jwt)){
+
+		console.log('new token requested', dataIn);
+		if(schema.check(dataIn, schema.account)){
+			dataIn.jti = createJTI(salt);
+			
 			ansble.find({_id: 'application_store'}).toArray(function (err, docs) {
 				var store = {}
 					, update = {};
@@ -78,16 +81,17 @@ MongoClient.connect(url, function(err, db) {
 						});
 					}
 
-					token = jwt.sign(dataIn, key, { algorithm: 'RS256'});
+					//TODO: if we ever use scopes change this
+					token = jwt.sign({scopes: [], app: dataIn.key, jti: dataIn.jti}, key, { algorithm: 'RS256'});
 					console.log(token);
 				} else {
 					token = 'exists';
 				}
 
-				events.emit('token:created:' + id, token);
+				events.emit('token:created:' + dataIn.key, token);
 			});
 		} else {
-			events.emit('token:created:' + id, 'invalid');
+			events.emit('token:created:' + dataIn.key, 'invalid');
 		}
 	});
 
@@ -95,6 +99,7 @@ MongoClient.connect(url, function(err, db) {
 
 	});
 
+	console.log('token handling events setup');
 	// insertDocuments(db, function() {
 	// db.close();
 	// });
