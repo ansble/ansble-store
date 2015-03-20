@@ -102,16 +102,27 @@ events.on('route:/api/v1/:app:post', function (connection) {
 
 events.on('route:/api/v1/:app/:id:get', function (connection) {
 	'use strict';
-	
-	events.once('data:set:' + connection.params.app + ':' + connection.params.id, function (data) {
-		if(data === null){
-			events.emit('error:404', connection);
-		} else {
-			connection.res.send(data);
-		}
-	});
+	if(typeof connection.req.headers.authorization !== 'undefined'){
+		events.once('token:verify:' + connection.req.headers.authorization, function (valid) {
+			if(valid && valid.app === connection.params.app){
+				events.once('data:set:' + connection.params.app + ':' + connection.params.id, function (data) {
+					if(data === null){
+						events.emit('error:404', connection);
+					} else {
+						connection.res.send(data);
+					}
+				});
 
-	events.emit('data:get', connection.params);
+				events.emit('data:get', connection.params);
+			} else {
+				events.emit('error:401', connection);
+			}
+		});
+
+		events.emit('token:verify', connection.req.headers.authorization);
+	} else {
+		events.emit('error:401', connection);
+	}
 });
 
 events.on('route:/api/v1/:app/:id:put', function (connection) {

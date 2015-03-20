@@ -11,15 +11,13 @@ MongoClient.connect(url, function(err, db) {
 	var store = db.collection('store');
 
 	events.on('data:get', function (input) {
-		// store.find({_meta: 'application_store'}).toArray(function (err, docs) {
-			events.emit('data:set:' + input.app + ':' + input.id, {'katie': 'the best wife ever!'});
-		// });
+		store.find({'_meta.access.app': input.app, '_id': input.id}).toArray(function (err, doc) {
+			console.log(err, doc, input);
+			events.emit('data:set:' + input.app + ':' + input.id, doc);
+		});
 	});
 
-	events.on('data:get:all', function (input) {
-		var query = {};
-		query['_meta.access.' + input.key] = 3;
-		
+	events.on('data:get:all', function (input) {		
 		store.find({'_meta.access.app': input.key, '_meta.access.read': true}).toArray(function (err, docs) {
 			events.emit('data:set:all:' + input.key, docs);
 		});
