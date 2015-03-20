@@ -8,28 +8,22 @@ var jwt = require('jsonwebtoken')
 	, MongoClient = require('mongodb').MongoClient
 	, url = 'mongodb://localhost:27017/myproject'
 
-	, key;
+	, key
+	, pubKey;
 
 //import the public key for this environment
 if(typeof process.env.KEY === 'undefined') {
-	fs.readFile('./keys/dev_key', function (err, data) {
-		'use strict';
-
-		if(err){
-			console.log(err);
-		} 
-
-		key = data;
-	});
+	key = fs.readFileSync('./keys/dev_key');
+	pubKey = fs.readFileSync('./keys/dev_key.pem');
 } else {
 	key = process.env.KEY;
+	pubKey = process.env.PUB_KEY;
 }
 
 MongoClient.connect(url, function(err, db) {
 	'use strict';
 
-	var ansble = db.collection('ansble')
-		, store = db.collection('store');
+	var ansble = db.collection('ansble');
 
 	console.log('db connected');
 
@@ -38,12 +32,10 @@ MongoClient.connect(url, function(err, db) {
 	}
 	
 	events.on('token:verify', function (token) {
-
-		jwt.verify(token, key, { algorithm: 'RS256'}, function (err, decoded) {
+		jwt.verify(token, pubKey, { algorithm: 'RS256'}, function (err, decoded) {
 			if(err){
-				console.log(err);
+				events.emit('token:verify:' + token, false);
 			} else {
-				console.log(decoded);
 				events.emit('token:verify:' + token, decoded);
 			}
 		});

@@ -45,33 +45,59 @@ events.on('route:/api:post', function (connection) {
 events.on('route:/api/v1/:app:get', function (connection) {
 	'use strict';
 	
-	events.once('data:set:all:' + connection.params.app, function (data) {
-		if(data === null){
-			events.emit('error:404', connection);
-		} else {
-			connection.res.send(data);
-		}
 
-	});
+	if(typeof connection.req.headers.authorization !== 'undefined'){
+		events.once('token:verify:' + connection.req.headers.authorization, function (valid) {
+			if(valid && valid.app === connection.params.app){
+				events.once('data:set:all:' + connection.params.app, function (data) {
+					if(data === null){
+						events.emit('error:404', connection);
+					} else {
+						//TODO: grab the allowed domains and use them to set CORS
+						// connection.res.setHeader('Access-Control-Allow-Origin', valid.)
+						connection.res.send(data);
+					}
 
-	events.emit('data:get:all', {key: connection.params.app});
+				});
+
+				events.emit('data:get:all', {key: connection.params.app});
+			} else {
+				events.emit('error:401', connection);
+			}
+		});
+
+		events.emit('token:verify', connection.req.headers.authorization);
+	} else {
+		events.emit('error:401', connection);
+	}
+	
 });
 
 events.on('route:/api/v1/:app:post', function (connection) {
 	'use strict';
 	var id;
-	
-	parser(connection, function (body) {
-		id = crypto.createHash('sha1').update(JSON.stringify(body)).digest('hex');
+	if(typeof connection.req.headers.authorization !== 'undefined'){
+		events.once('token:verify:' + connection.req.headers.authorization, function (valid) {
+			if(valid && valid.app === connection.params.app){
+				parser(connection, function (body) {					
+					id = crypto.createHash('sha1').update(JSON.stringify(body)).digest('hex');
 
-		events.once('data:saved:' + id, function (data) {
-			connection.res.send(data);
+					events.once('data:saved:' + id, function (data) {
+						connection.res.send(data);
+					});
+
+					//add a typecheck here before proceeding...
+					events.emit('data:new', {key: connection.params.app, id: id, data:body});
+				});
+			} else {
+				events.emit('error:401', connection);
+			}
 		});
 
-		//add a typecheck here before proceeding...
-		events.emit('data:new', {key: connection.params.app, id: id, data:body});
-	});
-
+		events.emit('token:verify', connection.req.headers.authorization);
+	} else {
+		events.emit('error:401', connection);
+	}
 });
 
 events.on('route:/api/v1/:app/:id:get', function (connection) {

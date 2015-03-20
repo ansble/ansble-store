@@ -1,31 +1,59 @@
-var events = require('monument').events;
+var events = require('monument').events
+	, MongoClient = require('mongodb').MongoClient
+	, url = 'mongodb://localhost:27017/myproject'
 
-events.on('data:get', function (input) {
+	, crypto = require('crypto');
+
+
+MongoClient.connect(url, function(err, db) {
 	'use strict';
 
-	events.emit('data:set:' + input.app + ':' + input.id, {'katie': 'the best wife ever!'});
-	
-});
+	var store = db.collection('store');
 
-events.on('data:get:all', function (input) {
-	'use strict';
+	events.on('data:get', function (input) {
+		// store.find({_meta: 'application_store'}).toArray(function (err, docs) {
+			events.emit('data:set:' + input.app + ':' + input.id, {'katie': 'the best wife ever!'});
+		// });
+	});
 
-	events.emit('data:set:all:' + input.key, [{'Katie': 'the best wife ever!'}, {'Gabe': 'the best brother ever!'}]);
-	
-});
+	events.on('data:get:all', function (input) {
+		var query = {};
+		query['_meta.access.' + input.key] = 3;
+		
+		store.find({'_meta.access.app': input.key, '_meta.access.read': true}).toArray(function (err, docs) {
+			events.emit('data:set:all:' + input.key, docs);
+		});
+	});
 
-events.on('data:new', function (input) {
-	'use strict';
+	events.on('data:new', function (input) {
+		//clone data
+		var data = JSON.parse(JSON.stringify(input.data))
+			, id = crypto.createHash('sha1').update(JSON.stringify(input.data)).digest('hex');
 
-	input.data.id = 1;
+		data._meta = {
+			access: [
+				{app: input.key, read:true, write:true}
+			]
+			, createdDate: new Date()
+			, updatedDate: new Date()
+			, createdBy: input.key
+		};
 
-	events.emit('data:saved:' + input.id, input.data);
-});
+		console.log(data);
+		store.insert(data, function(err,doc) {
+			console.log(err, doc);
+			if(err){
+				console.log(err);
+			}
 
-events.on('data:update', function (input) {
-	'use strict';
+			events.emit('data:saved:' + id, doc);
+		});
 
-	input.data.updatedDate = new Date();
+	});
 
-	events.emit('data:saved:' + input.id, input.data);
+	events.on('data:update', function (input) {
+		input.data.updatedDate = new Date();
+
+		events.emit('data:saved:' + input.id, input.data);
+	});
 });

@@ -333,6 +333,9 @@ html {
   font-weight: bold;
   font-style: normal; }
 
+.signup__item {
+  display: block; }
+
 .modal {
   display: none; }
   .modal[open] {

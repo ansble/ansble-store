@@ -3,5 +3,6 @@
 	"/api": ["get", "post"],
 	"/api/v1/:app": ["get", "post"],
 	"/api/v1/:app/:id": ["get", "put"],
-	"/templates": ["get"]
+	"/templates": ["get"],
+	"/about": ["get"]
 }
