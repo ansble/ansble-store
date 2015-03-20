@@ -23,5 +23,11 @@
 
 	[open] &__auth {
 		word-break: break-all;
+		font-size: .75rem;
+		margin: 0;
+	}
+
+	[open] &__sub-header {
+		margin: 0;
 	}
 }

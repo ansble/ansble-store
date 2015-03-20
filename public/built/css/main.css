@@ -352,7 +352,11 @@ html {
     margin: 15% auto;
     padding: 1rem; }
   [open] .modal__auth {
-    word-break: break-all; }
+    word-break: break-all;
+    font-size: .75rem;
+    margin: 0; }
+  [open] .modal__sub-header {
+    margin: 0; }
 
 .header__logo {
   font-size: 1rem;
