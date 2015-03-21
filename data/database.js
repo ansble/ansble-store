@@ -24,9 +24,10 @@ MongoClient.connect(url, function(err, db) {
 				store.findOne({'_meta.access.app': input.app, '_id': input.id}, function (err, doc) {
 					events.emit('data:set:' + input.app + ':' + input.id, doc);
 				});
+			} else {
+				console.log(input.id, e);
+				events.emit('data:set:' + input.app + ':' + input.id, null);
 			}
-			console.log(input.id, e);
-			events.emit('data:set:' + input.app + ':' + input.id, null);
 		}
 
 	});
