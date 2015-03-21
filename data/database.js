@@ -1,5 +1,6 @@
 var events = require('monument').events
 	, MongoClient = require('mongodb').MongoClient
+	, mongo = require('mongodb')
 	, url = 'mongodb://localhost:27017/myproject'
 
 	, crypto = require('crypto');
@@ -8,11 +9,14 @@ var events = require('monument').events
 MongoClient.connect(url, function(err, db) {
 	'use strict';
 
-	var store = db.collection('store');
+	var store = db.collection('store')
+		, BSON = mongo.BSONPure
+		, id;
 
 	events.on('data:get', function (input) {
-		store.find({'_meta.access.app': input.app, '_id': input.id}).toArray(function (err, doc) {
-			console.log(err, doc, input);
+		id = new BSON.ObjectID(input.id);
+
+		store.findOne({'_meta.access.app': input.app, '_id': id}, function (err, doc) {
 			events.emit('data:set:' + input.app + ':' + input.id, doc);
 		});
 	});
