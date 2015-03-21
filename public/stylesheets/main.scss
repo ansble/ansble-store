@@ -33,3 +33,30 @@ a {
 a:hover {
 	border-bottom: 1px solid $main--accent;
 }
+
+.header{
+	background: url('/images/logo_400x300.png');
+	width: 385px;
+	height: 215px;
+}
+
+.tr{
+	overflow: hidden;
+	text-indent: -100%;
+}
+
+.center{
+	margin:0 auto;
+}
+
+.text-center{
+	text-align: center;
+}
+
+.text-right{
+	text-align: right;
+}
+
+footer{
+	font-size: .75em;
+}
