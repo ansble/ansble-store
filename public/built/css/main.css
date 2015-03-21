@@ -455,7 +455,7 @@ a {
 a:hover {
   border-bottom: 1px solid #f2506e; }
 
-.header {
+.header__image {
   background: url('/images/logo_400x300.png');
   width: 385px;
   height: 215px; }
