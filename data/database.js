@@ -20,6 +20,7 @@ MongoClient.connect(url, function(err, db) {
 				events.emit('data:set:' + input.app + ':' + input.id, doc);
 			});
 		} catch (e) {
+			console.log(input.id, e);
 			events.emit('data:set:' + input.app + ':' + input.id, null);
 		}
 
