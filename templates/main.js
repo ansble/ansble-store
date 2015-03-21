@@ -1,6 +1,6 @@
 (function(){function main(it
 /**/) {
-var out='<!DOCTYPE html><html> <head> <title>ansble llc: powerful rest APIed data store</title> <link rel=\'stylesheet\' href=\'/stylesheets/style.css\' /> </head> <body> <h1 class="header tr center">ansble llc</h1> <p class="text-center">coming very very soon&hellip;</p> <footer class="text-right"> &copy; 2015 <a href="http://ansble.com">ansble llc</a> </footer> </body></html>';return out;
+var out='<!DOCTYPE html><html> <head> <meta name="viewport" content="width=device-width"> <title>ansble: rest api-ed data store for you and your apps</title> <link href="/built/css/main.css" rel="stylesheet"> </head> <body> <h1 class="header tr center">ansble llc</h1> <p class="text-center">coming very very soon&hellip;</p> <footer class="text-right"> &copy; 2015 <a href="http://ansble.com">ansble llc</a> </footer> </body></html>';return out;
 }var itself=main, _encodeHTML=(function (doNotSkipEncoded) {
 		var encodeHTMLRules = { "&": "&#38;", "<": "&#60;", ">": "&#62;", '"': "&#34;", "'": "&#39;", "/": "&#47;" },
 			matchHTML = doNotSkipEncoded ? /[&<>"'\/]/g : /&(?!#?\w+;)|<|>|"|'|\//g;
