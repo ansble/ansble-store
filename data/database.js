@@ -1,7 +1,7 @@
 var events = require('monument').events
 	, MongoClient = require('mongodb').MongoClient
 	, mongo = require('mongodb')
-	, url = 'mongodb://localhost:27017/myproject'
+	, url = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/myproject'
 	, BSON = mongo.BSONPure
 	, crypto = require('crypto');
 

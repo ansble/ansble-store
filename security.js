@@ -6,7 +6,7 @@ var jwt = require('jsonwebtoken')
 	, createJTI = require('./utils').generateID
 	
 	, MongoClient = require('mongodb').MongoClient
-	, url = 'mongodb://localhost:27017/myproject'
+	, url = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/myproject'
 
 	, key
 	, pubKey;
@@ -14,7 +14,7 @@ var jwt = require('jsonwebtoken')
 //import the public key for this environment
 if(typeof process.env.KEY === 'undefined') {
 	key = fs.readFileSync('./keys/dev_key');
-	pubKey = fs.readFileSync('./keys/dev_key.pem');
+	pubKey = fs.readFileSync('./keys/dev_key.pub');
 } else {
 	key = process.env.KEY;
 	pubKey = process.env.PUB_KEY;

@@ -10,8 +10,11 @@ var events = require('monument').events
 
 events.on('route:/api:get', function (connection) {
 	'use strict';
-
-	connection.res.send(apiTemplate());
+	if(typeof connection.query.token !== 'undefined' && connection.query.token === '550c1afb126db4250aa5f64a'){
+		connection.res.send(apiTemplate());
+	} else {
+		events.emit('error:401', connection);
+	}
 });
 
 events.on('route:/api:post', function (connection) {
