@@ -28,7 +28,7 @@ events.on('route:/api:post', function (connection) {
 		body.payment = {};
 
 		events.once('token:created:' + body.key, function (token) {
-			console.log(body);
+			// console.log(body);
 			connection.res.send({auth: token, key: body.key});
 		});
 
