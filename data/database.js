@@ -13,11 +13,16 @@ MongoClient.connect(url, function(err, db) {
 		, id;
 
 	events.on('data:get', function (input) {
-		id = new BSON.ObjectID(input.id);
+		try{
+			id = new BSON.ObjectID(input.id);
+			
+			store.findOne({'_meta.access.app': input.app, '_id': id}, function (err, doc) {
+				events.emit('data:set:' + input.app + ':' + input.id, doc);
+			});
+		} catch (e) {
+			events.emit('data:set:' + input.app + ':' + input.id, null);
+		}
 
-		store.findOne({'_meta.access.app': input.app, '_id': id}, function (err, doc) {
-			events.emit('data:set:' + input.app + ':' + input.id, doc);
-		});
 	});
 
 	events.on('data:get:all', function (input) {		
