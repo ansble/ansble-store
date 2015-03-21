@@ -2,7 +2,7 @@ var events = require('monument').events
 	, MongoClient = require('mongodb').MongoClient
 	, mongo = require('mongodb')
 	, url = 'mongodb://localhost:27017/myproject'
-
+	, BSON = mongo.BSONPure
 	, crypto = require('crypto');
 
 
@@ -10,7 +10,6 @@ MongoClient.connect(url, function(err, db) {
 	'use strict';
 
 	var store = db.collection('store')
-		, BSON = mongo.BSONPure
 		, id;
 
 	events.on('data:get', function (input) {
@@ -43,7 +42,6 @@ MongoClient.connect(url, function(err, db) {
 
 		console.log(data);
 		store.insert(data, function(err,doc) {
-			console.log(err, doc);
 			if(err){
 				console.log(err);
 			}
