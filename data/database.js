@@ -20,6 +20,11 @@ MongoClient.connect(url, function(err, db) {
 				events.emit('data:set:' + input.app + ':' + input.id, doc);
 			});
 		} catch (e) {
+			if(typeof input.id === 'string') {
+				store.findOne({'_meta.access.app': input.app, '_id': input.id}, function (err, doc) {
+					events.emit('data:set:' + input.app + ':' + input.id, doc);
+				});
+			}
 			console.log(input.id, e);
 			events.emit('data:set:' + input.app + ':' + input.id, null);
 		}
