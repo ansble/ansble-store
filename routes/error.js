@@ -25,3 +25,9 @@ emitter.on('error:500', function (objIn) {
 		objIn.connection.res.end(errorTemplate({message: 'server side error happened... sorry.', explanation: ''}));
 	}
 });
+
+emitter.on('error:db', function (err) {
+	'use strict';
+
+	console.log(err);
+});

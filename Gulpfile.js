@@ -8,11 +8,18 @@ var gulp = require('gulp')
     , sass = require('gulp-sass')
     , sourcemaps = require('gulp-sourcemaps')
 
+    , mocha = require('gulp-mocha')
+
     , handlebars = require('gulp-handlebars')
     , defineModule = require('gulp-define-module')
     , declare = require('gulp-declare')
 
     , cp = require('child_process')
+    
+    //for restarting node on server file changes...
+    , spawn = require('child_process').spawn
+    , node
+
     , argv = require('yargs').argv
 
     , pkg = require('./package.json');
@@ -31,9 +38,27 @@ gulp.task('default', ['localBuild'], function(){
     });
 });
 
+gulp.task('server', function() {
+    'use strict';
+
+    if (node) {
+        node.kill();
+    }
+    
+    node = spawn('node', ['app.js'], {stdio: 'inherit'});
+
+    node.on('close', function (code) {
+        if (code === 8) {
+          gulp.log('Error detected, waiting for changes...');
+        }
+    });
+});
+
 gulp.task('test', function (){
     'use strict';
 
+    return gulp.src(['**/**_test.js', '!node_modules/**/*'], {read: false})
+            .pipe(mocha({reporter: 'spec'}));
 });
 
 gulp.task('localBuild', ['buildTemplates'], function(){
@@ -92,7 +117,7 @@ gulp.task('build:prod', ['buildTemplates', 'localBuild'], function(){
         .pipe(gulp.dest('public/javascripts/built/'));
 });
 
-gulp.task('dev', function () {
+gulp.task('dev', ['server', 'sass'], function () {
     'use strict';
     
     gulp.watch([
@@ -101,4 +126,21 @@ gulp.task('dev', function () {
                 , './public/fonts/fonts.scss'
                 , './public/components/**/*.scss'
             ], ['sass']);
+
+    gulp.watch([
+            '!templates/*.js'
+            , '!public/**/*.js'
+            , '!node_modules/**/*.js'
+            , '**/*.js'
+            , 'templates/*.jst'
+            , 'templates/*.def'
+        ], ['server']);
+});
+
+process.on('exit', function() {
+    'use strict';
+
+    if (node) {
+        node.kill();
+    }
 });

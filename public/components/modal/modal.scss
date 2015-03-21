@@ -1,0 +1,33 @@
+.modal {
+	display: none;
+
+	&[open] {
+		display: block;
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: $modal--background;
+		z-index: 1001;
+	}
+
+	[open] &__content {
+		background: $main--background;
+		min-height: 40%;
+		width:90%;
+		box-shadow: 1px 1px 5px $modal--background;
+		margin: 15% auto;
+		padding: 1rem;
+	}
+
+	[open] &__auth {
+		word-break: break-all;
+		font-size: .75rem;
+		margin: 0;
+	}
+
+	[open] &__sub-header {
+		margin: 0;
+	}
+}

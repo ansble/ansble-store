@@ -1,31 +1,59 @@
-var events = require('monument').events;
+var events = require('monument').events
+	, MongoClient = require('mongodb').MongoClient
+	, mongo = require('mongodb')
+	, url = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/myproject'
+	, BSON = mongo.BSONPure
+	, crypto = require('crypto');
 
-events.on('data:get', function (input) {
+
+MongoClient.connect(url, function(err, db) {
 	'use strict';
 
-	events.emit('data:set:' + input.app + ':' + input.id, null);
-	
-});
+	var store = db.collection('store')
+		, id;
 
-events.on('data:get:all', function (input) {
-	'use strict';
+	events.on('data:get', function (input) {
+		id = new BSON.ObjectID(input.id);
 
-	events.emit('data:set:all:' + input.key, null);
-	
-});
+		store.findOne({'_meta.access.app': input.app, '_id': id}, function (err, doc) {
+			events.emit('data:set:' + input.app + ':' + input.id, doc);
+		});
+	});
 
-events.on('data:new', function (input) {
-	'use strict';
+	events.on('data:get:all', function (input) {		
+		store.find({'_meta.access.app': input.key, '_meta.access.read': true}).toArray(function (err, docs) {
+			events.emit('data:set:all:' + input.key, docs);
+		});
+	});
 
-	input.data.id = 1;
+	events.on('data:new', function (input) {
+		//clone data
+		var data = JSON.parse(JSON.stringify(input.data))
+			, id = crypto.createHash('sha1').update(JSON.stringify(input.data)).digest('hex');
 
-	events.emit('data:saved:' + input.id, input.data);
-});
+		data._meta = {
+			access: [
+				{app: input.key, read:true, write:true}
+			]
+			, createdDate: new Date()
+			, updatedDate: new Date()
+			, createdBy: input.key
+		};
 
-events.on('data:update', function (input) {
-	'use strict';
+		console.log(data);
+		store.insert(data, function(err,doc) {
+			if(err){
+				console.log(err);
+			}
 
-	input.data.updatedDate = new Date();
+			events.emit('data:saved:' + id, doc);
+		});
 
-	events.emit('data:saved:' + input.id, input.data);
+	});
+
+	events.on('data:update', function (input) {
+		input.data.updatedDate = new Date();
+
+		events.emit('data:saved:' + input.id, input.data);
+	});
 });

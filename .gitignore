@@ -2,3 +2,5 @@ node_modules/
 public/lib/
 .DS_Store
 *.tgz
+keys/
+data/db/
