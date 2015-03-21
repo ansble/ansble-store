@@ -7,7 +7,7 @@
 			, name: doc.querySelector('[name="app"]')
 			, url: doc.querySelector('[name="url"]')
 			, description: doc.querySelector('[name="what"]')
-			, phone: doc.querySelector('[name="phone"]')
+			// , phone: doc.querySelector('[name="phone"]')
 			, email: doc.querySelector('[name="email"]')
 		}
 		, modal = doc.querySelector('.modal')
