@@ -13,6 +13,7 @@ MongoClient.connect(url, function(err, db) {
 		, id;
 
 	events.on('data:get', function (input) {
+		
 		try{
 			id = new BSON.ObjectID(input.id);
 			
@@ -67,5 +68,14 @@ MongoClient.connect(url, function(err, db) {
 		input.data.updatedDate = new Date();
 
 		events.emit('data:saved:' + input.id, input.data);
+	});
+
+	events.on('data:delete', function (id) {
+		if(typeof id !== 'undefined'){
+			store.remove({'_id': id}, true);
+			events.emit('data:deleted:id', true);
+		} else {
+			events.emit('data:deleted:id', false);
+		}
 	});
 });

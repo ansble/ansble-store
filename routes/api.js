@@ -106,23 +106,28 @@ events.on('route:/api/v1/:app:post', function (connection) {
 events.on('route:/api/v1/:app/:id:get', function (connection) {
 	'use strict';
 	if(typeof connection.req.headers.authorization !== 'undefined'){
-		events.once('token:verify:' + connection.req.headers.authorization, function (valid) {
-			if(valid && valid.app === connection.params.app){
-				events.once('data:set:' + connection.params.app + ':' + connection.params.id, function (data) {
-					if(data === null){
-						events.emit('error:404', connection);
-					} else {
-						connection.res.send(data);
-					}
-				});
+		events.required([
+					'token:verify:' + connection.req.headers.authorization
+					, 'data:set:' + connection.params.app + ':' + connection.params.id
+				]
+			, function (arr) {
 
-				events.emit('data:get', connection.params);
+			var valid = (arr[0] && arr[0].app === connection.params.app);
+
+			if(valid){
+				if(arr[1] === null){
+					events.emit('error:404', connection);
+				} else {
+					connection.res.send(arr[1]);
+				}
 			} else {
 				events.emit('error:401', connection);
 			}
 		});
 
+		events.emit('data:get', connection.params);
 		events.emit('token:verify', connection.req.headers.authorization);
+
 	} else {
 		events.emit('error:401', connection);
 	}
@@ -143,6 +148,35 @@ events.on('route:/api/v1/:app/:id:put', function (connection) {
 
 events.on('route:/api/v1/:app/:id:delete', function (connection) {
 	'use strict';
+
 	
-	connection.res.end('route /api/v1/:app/:id now responding to delete requests');
+	if(typeof connection.req.headers.authorization !== 'undefined'){
+		events.required(['token:verify:' + connection.req.headers.authorization, 'data:set:' + connection.params.app + ':' + connection.params.id], function (arr) {
+			var valid = (arr[0] && arr[0].app === connection.params.app)
+				, allowed;
+
+			allowed = arr[1]._meta.access.filter(function (permission) {
+				return permission.app === connection.params.app && typeof permission.del !== 'undefined' && permission.del;
+			});
+
+			console.log(allowed, valid, arr[1]._meta.access, connection.params.app);
+
+			if(valid && allowed.length > 0) {
+				//this item can be deleted with this key
+				events.once('data:deleted:' + connection.params.id, function (done) {
+					connection.res.send({success: done});
+				});
+
+				events.emit('data:delete:' + connection.params.id);
+			} else {
+				events.emit('error:401', connection);
+			}
+		});
+
+		events.emit('token:verify', connection.req.headers.authorization);
+		events.emit('data:get', connection.params);
+
+	} else {
+		events.emit('error:401', connection);
+	}
 });
