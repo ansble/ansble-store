@@ -45,7 +45,7 @@ MongoClient.connect(url, function(err, db) {
 
 		data._meta = {
 			access: [
-				{app: input.key, read:true, write:true}
+				{app: input.key, read:true, write:true, del:true}
 			]
 			, createdDate: new Date()
 			, updatedDate: new Date()

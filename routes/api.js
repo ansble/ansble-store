@@ -140,3 +140,9 @@ events.on('route:/api/v1/:app/:id:put', function (connection) {
 		events.emit('data:update', {key: connection.params.app, id: connection.params.id, data:body});
 	});
 });
+
+events.on('route:/api/v1/:app/:id:delete', function (connection) {
+	'use strict';
+	
+	connection.res.end('route /api/v1/:app/:id now responding to delete requests');
+});

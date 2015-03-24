@@ -13,16 +13,10 @@ var gulp = require('gulp')
     , handlebars = require('gulp-handlebars')
     , defineModule = require('gulp-define-module')
     , declare = require('gulp-declare')
-
-    , cp = require('child_process')
     
     //for restarting node on server file changes...
     , spawn = require('child_process').spawn
-    , node
-
-    , argv = require('yargs').argv
-
-    , pkg = require('./package.json');
+    , node;
 
 gulp.task('default', ['localBuild'], function(){
     'use strict';
