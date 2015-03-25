@@ -136,14 +136,28 @@ events.on('route:/api/v1/:app/:id:get', function (connection) {
 events.on('route:/api/v1/:app/:id:put', function (connection) {
 	'use strict';
 	
-	parser(connection, function (body) {
-		events.once('data:saved:' + connection.params.id, function (data) {
-			connection.res.send(data);
-		});
+	events.required([
+			'token:verify:' + connection.req.headers.authorization
+			, 'data:set:' + connection.params.app + ':' + connection.params.id
+		], function (data) {
+		var valid = (data[0] && data[0].app === connection.params.app);
+		
+		if(valid && data[1] !== null){
+			parser(connection, function (body) {
+				events.once('data:saved:' + connection.params.id, function (data) {
+					connection.res.send(data);
+				});
 
-		//add a typecheck here before proceeding...
-		events.emit('data:update', {key: connection.params.app, id: connection.params.id, data:body});
+				//add a typecheck here before proceeding...
+				events.emit('data:update', {key: connection.params.app, id: connection.params.id, data:body});
+			});
+		} else {
+			events.emit('error:401', connection);
+		}
 	});
+
+	events.emit('token:verify', connection.req.headers.authorization);
+	events.emit('data:get', connection.params);
 });
 
 events.on('route:/api/v1/:app/:id:delete', function (connection) {
