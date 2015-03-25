@@ -159,7 +159,7 @@ events.on('route:/api/v1/:app/:id:delete', function (connection) {
 				return permission.app === connection.params.app && typeof permission.del !== 'undefined' && permission.del;
 			});
 
-			console.log(allowed, valid, arr[1]._meta.access, connection.params.app);
+			console.log(valid && allowed.length > 0);
 
 			if(valid && allowed.length > 0) {
 				//this item can be deleted with this key
@@ -167,7 +167,7 @@ events.on('route:/api/v1/:app/:id:delete', function (connection) {
 					connection.res.send({success: done});
 				});
 
-				events.emit('data:delete:' + connection.params.id);
+				events.emit('data:delete', connection.params.id);
 			} else {
 				events.emit('error:401', connection);
 			}

@@ -1,4 +1,6 @@
 var crypto = require('crypto')
+	, mongo = require('mongodb')
+	, BSON = mongo.BSONPure
 	, monthArray = [
 		'Jan'
 		, 'Feb'
@@ -27,9 +29,21 @@ var crypto = require('crypto')
 			, jti = crypto.createHash('sha1');
 
 		return jti.update(salt + new Date().getTime() + randString).digest('hex');
+	}
+
+	, mongoID = function (idIn) {
+		'use strict';
+		var id = idIn;
+
+		try{
+			id = new BSON.ObjectID(id);
+		}catch(e){}
+
+		return id;
 	};
 
 module.exports = {
 	formatDate: formatDate
 	, generateID: generateID
+	, convertToMongoID: mongoID
 };

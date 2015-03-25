@@ -1,36 +1,25 @@
 var events = require('monument').events
 	, MongoClient = require('mongodb').MongoClient
-	, mongo = require('mongodb')
 	, url = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/myproject'
-	, BSON = mongo.BSONPure
-	, crypto = require('crypto');
+	, crypto = require('crypto')
+	, utils = require('../utils');
 
 
 MongoClient.connect(url, function(err, db) {
 	'use strict';
 
-	var store = db.collection('store')
-		, id;
+	var store = db.collection('store');
 
 	events.on('data:get', function (input) {
-		
-		try{
-			id = new BSON.ObjectID(input.id);
-			
+		var id = utils.convertToMongoID(input.id);
+
+		if(typeof input.id !== 'undefined') {
 			store.findOne({'_meta.access.app': input.app, '_id': id}, function (err, doc) {
 				events.emit('data:set:' + input.app + ':' + input.id, doc);
 			});
-		} catch (e) {
-			if(typeof input.id === 'string') {
-				store.findOne({'_meta.access.app': input.app, '_id': input.id}, function (err, doc) {
-					events.emit('data:set:' + input.app + ':' + input.id, doc);
-				});
-			} else {
-				console.log(input.id, e);
-				events.emit('data:set:' + input.app + ':' + input.id, null);
-			}
+		} else {
+			events.emit('data:set:' + input.app + ':' + input.id, null);
 		}
-
 	});
 
 	events.on('data:get:all', function (input) {		
@@ -70,12 +59,15 @@ MongoClient.connect(url, function(err, db) {
 		events.emit('data:saved:' + input.id, input.data);
 	});
 
-	events.on('data:delete', function (id) {
+	events.on('data:delete', function (idIn) {
+		var id = utils.convertToMongoID(idIn);
+
 		if(typeof id !== 'undefined'){
-			store.remove({'_id': id}, true);
-			events.emit('data:deleted:id', true);
+			store.remove({'_id': id}, function(err, result) {
+				events.emit('data:deleted:' + id, (result === 1));
+			 });
 		} else {
-			events.emit('data:deleted:id', false);
+			events.emit('data:deleted:' + id, false);
 		}
 	});
 });
