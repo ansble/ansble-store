@@ -55,8 +55,12 @@ MongoClient.connect(url, function(err, db) {
 
 	events.on('data:update', function (input) {
 		input.data.updatedDate = new Date();
+		input.data._id = utils.convertToMongoID(input.data._id);
 
-		events.emit('data:saved:' + input.id, input.data);
+		store.update({'_id': input.data._id}, input.data, function (err, result) {
+			events.emit('data:saved:' + input.id, (result === 1));
+		});
+
 	});
 
 	events.on('data:delete', function (idIn) {
