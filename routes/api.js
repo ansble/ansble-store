@@ -145,7 +145,11 @@ events.on('route:/api/v1/:app/:id:put', function (connection) {
 		if(valid && data[1] !== null){
 			parser(connection, function (body) {
 				events.once('data:saved:' + connection.params.id, function (data) {
-					connection.res.send(data);
+					if(data){
+						connection.res.send(body);
+					} else {
+						events.emit('error:404', connection);
+					}
 				});
 
 				//add a typecheck here before proceeding...
