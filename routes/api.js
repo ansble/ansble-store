@@ -4,6 +4,7 @@ var events = require('monument').events
 	, getID = require('../utils').generateID
 
 	, schema = require('../data/schemas')
+	, sandbox = require('sandbox')
 
 	, apiTemplate = require('../templates/api');
 
@@ -197,4 +198,49 @@ events.on('route:/api/v1/:app/:id:delete', function (connection) {
 	} else {
 		events.emit('error:401', connection);
 	}
+});
+
+events.on('route:/api/v1/:app:report', function (connection) {
+	'use strict';
+
+	if(typeof connection.req.headers.authorization !== 'undefined'){
+		events.once('token:verify:' + connection.req.headers.authorization, function (valid) {
+			if(valid && valid.app === connection.params.app){
+				events.once('data:set:all:' + connection.params.app, function (data) {
+					if(data === null){
+						events.emit('error:404', connection);
+					} else {
+						//TODO: grab the allowed domains and use them to set CORS
+						// connection.res.setHeader('Access-Control-Allow-Origin', valid.)
+						parser(connection, function (body) {
+							var s = new sandbox()
+								, execString = 'result = data';
+
+							body.forEach(function (item) {
+								if(item.type === 'filter' || item.type === 'map' || item.type === 'reduce'){
+									execString += '.' + item.type + '(' + item.body + ')';
+								}
+							});
+
+							console.log(execString);
+
+							s.run('data = ' + JSON.stringify(data) + '; ' + execString, function (output) {
+								connection.res.send(output.result);
+							});
+						});
+					}
+
+				});
+
+				events.emit('data:get:all', {key: connection.params.app});
+			} else {
+				events.emit('error:401', connection);
+			}
+		});
+
+		events.emit('token:verify', connection.req.headers.authorization);
+	} else {
+		events.emit('error:401', connection);
+	}
+	
 });
