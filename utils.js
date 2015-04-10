@@ -40,10 +40,17 @@ var crypto = require('crypto')
 		}catch(e){}
 
 		return id;
-	};
+	}
+
+    , accessCheck = function (doc, key) {
+        return doc._meta.accessKeys.some(function (item) {
+                return item.key === key && item.read;
+            });
+    };
 
 module.exports = {
 	formatDate: formatDate
 	, generateID: generateID
 	, convertToMongoID: mongoID
+    , accessCheck: accessCheck
 };

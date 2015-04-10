@@ -27,4 +27,9 @@ describe('Utils Tests', function () {
 			assert.equal(mongoid, utils.convertToMongoID(mongoid));
 		});
 	});
+
+    describe('Access Check', function () {
+        it('should return true if a given key has access to an object');
+        it('should return false if a given key does not have access to an object');
+    });
 });

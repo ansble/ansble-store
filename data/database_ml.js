@@ -10,10 +10,10 @@ var events = require('monument').events
 events.on('data:get', function (input) {
     'use strict';
 
-    var id = utils.convertToMongoID(input.id);
+    var id = input.id;
 
     if(typeof input.id !== 'undefined') {
-        store.findOne({'_meta.access.app': input.app, '_id': id}, function (err, doc) {
+        ml.find({'_meta.access.app': input.app, '_id': id, '_meta.access.read': true}, function (err, doc) {
             events.emit('data:set:' + input.app + ':' + input.id, doc);
         });
     } else {
@@ -24,7 +24,7 @@ events.on('data:get', function (input) {
 events.on('data:get:all', function (input) {
     'use strict';
 
-    store.find({'_meta.access.app': input.key, '_meta.access.read': true}).toArray(function (err, docs) {
+    ml.find({'_meta.access.app': input.key, '_meta.access.read': true}).toArray(function (err, docs) {
         events.emit('data:set:all:' + input.key, docs);
     });
 });
@@ -45,8 +45,7 @@ events.on('data:new', function (input) {
         , createdBy: input.key
     };
 
-    console.log(data);
-    store.insert(data, function(err,doc) {
+    ml.save(data, function(err,doc) {
         if(err){
             console.log(err);
         }
@@ -62,7 +61,12 @@ events.on('data:update', function (input) {
     input.data._meta.updatedDate = new Date();
     input.data._id = utils.convertToMongoID(input.data._id);
 
-    store.update({'_id': input.data._id}, input.data, function (err, result) {
+    // alittle more complicated here...
+    //TODO: get the document
+    //TODO: update the document
+    //TODO: save the document
+
+    ml.update({'_id': input.data._id}, input.data, function (err, result) {
         events.emit('data:saved:' + input.id, (result === 1));
     });
 
@@ -74,7 +78,7 @@ events.on('data:delete', function (idIn) {
     var id = utils.convertToMongoID(idIn);
 
     if(typeof id !== 'undefined'){
-        store.remove({'_id': id}, function(err, result) {
+        ml.findAndDelete({'_id': id}, function(err, result) {
             events.emit('data:deleted:' + id, (result === 1));
          });
     } else {
