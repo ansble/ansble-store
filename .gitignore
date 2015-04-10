@@ -4,3 +4,4 @@ public/lib/
 *.tgz
 keys/
 data/db/
+.npmrc
