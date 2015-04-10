@@ -24,8 +24,8 @@ events.on('data:get', function (input) {
 events.on('data:get:all', function (input) {
     'use strict';
 
-    ml.find({'_meta.access.app': input.key, '_meta.access.read': true}).toArray(function (err, docs) {
-        events.emit('data:set:all:' + input.key, docs);
+    ml.find({'_meta.access.app': input.key, '_meta.access.read': true}, function (err, docs) {
+        events.emit('data:set:all:' + input.key, docs.results || []);
     });
 });
 

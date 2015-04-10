@@ -7,7 +7,7 @@ var jwt = require('jsonwebtoken')
 
     , mlclient = require('lds-ml-js')
     , config = require('lds-cf-service-config')
-    , ml = mlclient.connect(config['content-store'].credentials);
+    , ml = mlclient.connect(config['content-store'].credentials)
 
     , key
     , pubKey
@@ -27,6 +27,7 @@ events.on('token:verify', function (token) {
     'use strict';
 
     jwt.verify(token, pubKey, { algorithm: 'RS256'}, function (err, decoded) {
+        console.log(err);
         if(err){
             events.emit('token:verify:' + token, false);
         } else {
@@ -55,8 +56,6 @@ events.on('token:create', function (dataIn) {
                         console.log(result);
                     });
                 }else{
-                    //TODO: save document
-
                     doc[dataIn.key] = dataIn;
 
                     core.save('application_store', doc, function (err, result) {

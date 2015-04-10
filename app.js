@@ -1,7 +1,7 @@
 var monument = require('monument');
 
 require('./data/database_ml');
-require('./security');
+require('./security_ml');
 
 monument.server({
 				routePath: './routes'

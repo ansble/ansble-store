@@ -48,11 +48,12 @@ events.on('route:/api:post', function (connection) {
 
 events.on('route:/api/v1/:app:get', function (connection) {
 	'use strict';
-	
+
 
 	if(typeof connection.req.headers.authorization !== 'undefined'){
 		events.once('token:verify:' + connection.req.headers.authorization, function (valid) {
-			if(valid && valid.app === connection.params.app){
+			console.log(valid);
+            if(valid && valid.app === connection.params.app){
 				events.once('data:set:all:' + connection.params.app, function (data) {
 					if(data === null){
 						events.emit('error:404', connection);
@@ -74,7 +75,7 @@ events.on('route:/api/v1/:app:get', function (connection) {
 	} else {
 		events.emit('error:401', connection);
 	}
-	
+
 });
 
 events.on('route:/api/v1/:app:post', function (connection) {
@@ -83,7 +84,7 @@ events.on('route:/api/v1/:app:post', function (connection) {
 	if(typeof connection.req.headers.authorization !== 'undefined'){
 		events.once('token:verify:' + connection.req.headers.authorization, function (valid) {
 			if(valid && valid.app === connection.params.app){
-				parser(connection, function (body) {					
+				parser(connection, function (body) {
 					id = crypto.createHash('sha1').update(JSON.stringify(body)).digest('hex');
 
 					events.once('data:saved:' + id, function (data) {
@@ -136,13 +137,13 @@ events.on('route:/api/v1/:app/:id:get', function (connection) {
 
 events.on('route:/api/v1/:app/:id:put', function (connection) {
 	'use strict';
-	
+
 	events.required([
 			'token:verify:' + connection.req.headers.authorization
 			, 'data:set:' + connection.params.app + ':' + connection.params.id
 		], function (data) {
 		var valid = (data[0] && data[0].app === connection.params.app);
-		
+
 		if(valid && data[1] !== null){
 			parser(connection, function (body) {
 				events.once('data:saved:' + connection.params.id, function (data) {
@@ -168,7 +169,7 @@ events.on('route:/api/v1/:app/:id:put', function (connection) {
 events.on('route:/api/v1/:app/:id:delete', function (connection) {
 	'use strict';
 
-	
+
 	if(typeof connection.req.headers.authorization !== 'undefined'){
 		events.required(['token:verify:' + connection.req.headers.authorization, 'data:set:' + connection.params.app + ':' + connection.params.id], function (arr) {
 			var valid = (arr[0] && arr[0].app === connection.params.app)
@@ -242,5 +243,5 @@ events.on('route:/api/v1/:app:report', function (connection) {
 	} else {
 		events.emit('error:401', connection);
 	}
-	
+
 });

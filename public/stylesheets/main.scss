@@ -1,5 +1,3 @@
-@import '../lib/normalize.css/normalize';
-
 html {
   box-sizing: border-box;
 }
@@ -20,9 +18,18 @@ body {
 	font-size: 16px;
 	line-height: 1.6;
 
-	padding: 0 2em;
+	// padding: 0 2em;
 	color: $main--text;
 	background: $main--background;
+}
+
+.dark-background {
+    background: url('http://i1136.photobucket.com/albums/n491/skywalkr16/GIFS/remembrall.gif') no-repeat;
+    background-size: cover;
+
+    min-height: 100vh;
+    min-width: 100vw;
+    color: $main--text-dark;
 }
 
 a {
@@ -35,7 +42,6 @@ a:hover {
 }
 
 .header__image{
-	background: url('/images/logo_400x300.png');
 	width: 385px;
 	height: 215px;
 }

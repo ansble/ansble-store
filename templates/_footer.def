@@ -1,6 +1,5 @@
 <footer class="footer">
 	<section class="footer__nav--copyright">
-		&copy; 2015 ansble llc
 	</section>
 	<section class="footer__nav__api">
 		<a href="/api" class="footer__nav__link">api</a>
