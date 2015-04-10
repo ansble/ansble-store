@@ -10,7 +10,9 @@ var jwt = require('jsonwebtoken')
     , ml = mlclient.connect(config['content-store'].credentials);
 
     , key
-    , pubKey;
+    , pubKey
+
+    , core = ml.collections(['app-core']);
 
 //import the public key for this environment
 if(typeof process.env.KEY === 'undefined') {
@@ -23,6 +25,7 @@ if(typeof process.env.KEY === 'undefined') {
 
 events.on('token:verify', function (token) {
     'use strict';
+
     jwt.verify(token, pubKey, { algorithm: 'RS256'}, function (err, decoded) {
         if(err){
             events.emit('token:verify:' + token, false);
@@ -37,29 +40,26 @@ events.on('token:create', function (dataIn) {
     var token;
 
     //check to see if this app already has a key... and then do stuff
-
-    console.log('new token requested');
     if(schema.check(dataIn, schema.account)){
         dataIn.jti = createJTI(salt);
 
-        ansble.find({_id: 'application_store'}).toArray(function (err, docs) {
+        core.get('application_store', function (err, doc) {
             var store = {}
                 , update = {};
 
-            if(typeof docs[0] === 'undefined' || typeof docs[0][dataIn.key] === 'undefined'){
-                if(typeof docs[0] === 'undefined'){
+            if(typeof doc === 'undefined' || typeof doc[dataIn.key] === 'undefined'){
+                if(typeof doc === 'undefined'){
                     store._id = 'application_store';
                     store[dataIn.key] = dataIn;
-                    ansble.insert(store, function (err, result){
+                    core.save('application_store', store, function (err, result){
                         console.log(result);
                     });
                 }else{
-                    update = {
-                        '$set':{}
-                    };
-                    update.$set[dataIn.app] = dataIn;
+                    //TODO: save document
 
-                    ansble.update({_id: 'application_store'}, update, function (err, result) {
+                    doc[dataIn.key] = dataIn;
+
+                    core.save('application_store', doc, function (err, result) {
                         console.log(err, result);
                     });
                 }
