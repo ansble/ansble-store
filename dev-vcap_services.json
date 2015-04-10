@@ -1,0 +1,17 @@
+{
+  "marklogic-service-0.1": [
+    {
+      "name": "content-store",
+      "label": "marklogic-service-0.1",
+      "tags": [],
+      "plan": "Test Provisioning",
+      "credentials": {
+        "password": "content-store_2c628c9a-e95e-4e3c-963c-e83a9ea12fde_2015-03-10-20-45-7245501pass",
+        "port": 9008,
+        "host": "l14001.ldschurch.org",
+        "name": "content-store_2c628c9a-e95e-4e3c-963c-e83a9ea12fde_2015-03-10-20-45-724",
+        "username": "content-store_2c628c9a-e95e-4e3c-963c-e83a9ea12fde_2015-03-10-20-45-724-user"
+      }
+    }
+  ]
+}

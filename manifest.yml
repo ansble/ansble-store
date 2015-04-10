@@ -1,0 +1,22 @@
+---
+applications:
+- name: content-store
+  memory: 256M
+  instances: 2
+  host: content-store
+  domain: app.lds.org
+  command: npm start
+  path: .
+  env:
+    NODE_ENV: production
+
+
+- name: content-store-stage
+  memory: 256M
+  instances: 2
+  host: content-store
+  domain: app-stage.lds.org
+  command: npm start
+  path: .
+  env:
+    NODE_ENV: production
