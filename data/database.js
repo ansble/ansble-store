@@ -54,6 +54,7 @@ MongoClient.connect(url, function(err, db) {
 	});
 
 	events.on('data:update', function (input) {
+		console.log(input);
 		input.data._meta.updatedDate = new Date();
 		input.data._id = utils.convertToMongoID(input.data._id);
 
