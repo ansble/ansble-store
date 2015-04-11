@@ -155,7 +155,7 @@ events.on('route:/api/v1/:app/:id:put', function (connection) {
 
 				//add a typecheck here before proceeding...
 				if(Array.isArray(body)){
-					events.emit('error:500', connection);
+					events.emit('error:500', {connection: connection, message: 'You can only PUT a single object'});
 				} else {
 					events.emit('data:update', {key: connection.params.app, id: connection.params.id, data:body});
 				}
