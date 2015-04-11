@@ -154,7 +154,11 @@ events.on('route:/api/v1/:app/:id:put', function (connection) {
 				});
 
 				//add a typecheck here before proceeding...
-				events.emit('data:update', {key: connection.params.app, id: connection.params.id, data:body});
+				if(Array.isArray(body)){
+					events.emit('error:500', connection);
+				} else {
+					events.emit('data:update', {key: connection.params.app, id: connection.params.id, data:body});
+				}
 			});
 		} else {
 			events.emit('error:401', connection);
