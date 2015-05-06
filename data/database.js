@@ -22,7 +22,7 @@ MongoClient.connect(url, function(err, db) {
 		}
 	});
 
-	events.on('data:get:all', function (input) {		
+	events.on('data:get:all', function (input) {
 		store.find({'_meta.access.app': input.key, '_meta.access.read': true}).toArray(function (err, docs) {
 			events.emit('data:set:all:' + input.key, docs);
 		});
@@ -33,7 +33,9 @@ MongoClient.connect(url, function(err, db) {
 		var data = JSON.parse(JSON.stringify(input.data))
 			, id = crypto.createHash('sha1').update(JSON.stringify(input.data)).digest('hex');
 
-		data._meta = {
+        console.log(input);
+
+        data._meta = {
 			access: [
 				{app: input.key, read:true, write:true, del:true}
 			]

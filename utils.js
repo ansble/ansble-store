@@ -40,10 +40,31 @@ var crypto = require('crypto')
 		}catch(e){}
 
 		return id;
-	};
+	}
+
+    , filterTags = function (tags) {
+        'use strict';
+
+        if(!Array.isArray(tags)){
+            tags = [tags];
+        }
+
+        return function (item) {
+            var match = false;
+
+            tags.forEach(function (tag) {
+                if(typeof item.tags !== 'undefined' && Array.isArray(item.tags) && item.tags.indexOf(tag) >= 0){
+                    match = true;
+                }
+            });
+
+            return match;
+        };
+    };
 
 module.exports = {
 	formatDate: formatDate
 	, generateID: generateID
 	, convertToMongoID: mongoID
+    , filterTags: filterTags
 };
