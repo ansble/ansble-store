@@ -33,7 +33,7 @@ MongoClient.connect(url, function(err, db) {
 		var data = JSON.parse(JSON.stringify(input.data))
 			, id = crypto.createHash('sha1').update(JSON.stringify(input.data)).digest('hex');
 
-        console.log(input);
+        console.log('\n\n', input, '\n\n');
 
         data._meta = {
 			access: [
@@ -57,10 +57,10 @@ MongoClient.connect(url, function(err, db) {
 
 	events.on('data:update', function (input) {
 		console.log(input);
-		input.data._meta.updatedDate = new Date();
-		input.data._id = utils.convertToMongoID(input.data._id);
+		input._meta.updatedDate = new Date();
+		input._id = utils.convertToMongoID(input._id);
 
-		store.update({'_id': input.data._id}, input.data, function (err, result) {
+		store.update({'_id': input._id}, input, function (err, result) {
 			events.emit('data:saved:' + input.id, (result === 1));
 		});
 
@@ -71,7 +71,7 @@ MongoClient.connect(url, function(err, db) {
 
 		if(typeof id !== 'undefined'){
 			store.remove({'_id': id}, function(err, result) {
-				events.emit('data:deleted:' + id, (result === 1));
+				events.emit('data:deleted:' + id, {success: (result === 1)});
 			 });
 		} else {
 			events.emit('data:deleted:' + id, false);

@@ -89,6 +89,7 @@ events.on('route:/api/v1/:app:post', function (connection) {
 		events.once('token:verify:' + connection.req.headers.authorization, function (valid) {
 			if(valid && valid.app === connection.params.app){
 				parser(connection, function (body) {
+
 					id = crypto.createHash('sha1').update(JSON.stringify(body)).digest('hex');
 
 					events.once('data:saved:' + id, function (data) {
@@ -230,8 +231,6 @@ events.on('route:/api/v1/:app:report', function (connection) {
 									execString += '.' + item.type + '(' + item.body + ')';
 								}
 							});
-
-							console.log(execString);
 
 							s.run('data = ' + JSON.stringify(data) + '; ' + execString, function (output) {
 								connection.res.send(output.result);
