@@ -7,7 +7,7 @@
     "bower": "^1.3.12",
     "jsonwebtoken": "^4.1.0",
     "mongodb": "^1.4.34",
-    "monument": "^1.5.0",
+    "monument": "^2.0.0",
     "sandbox": "^0.8.6"
   },
   "devDependencies": {
@@ -38,6 +38,6 @@
   "repository": "https://github.com/designfrontier/dfredesign.git",
   "license": "MIT",
   "engines": {
-    "node": "0.12.x"
+    "node": "4.1.x"
   }
 }
