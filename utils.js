@@ -36,7 +36,7 @@ var crypto = require('crypto')
 		var id = idIn;
 
 		try{
-			id = new BSON.ObjectID(id);
+			id = new mongo.ObjectID(id);
 		}catch(e){}
 
 		return id;

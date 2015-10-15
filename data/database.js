@@ -13,8 +13,14 @@ MongoClient.connect(url, function(err, db) {
 	events.on('data:get', function (input) {
 		var id = utils.convertToMongoID(input.id);
 
-		if(typeof input.id !== 'undefined') {
-			store.findOne({'_meta.access.app': input.app, '_id': id}, function (err, doc) {
+        if(typeof input.id !== 'undefined') {
+			store.findOne({
+                '$and': [
+                    {'_meta.access.app': input.app}
+                    , {'_meta.access.read': true}
+                    , {'_id': id}
+                ]
+            }, function (err, doc) {
 				events.emit('data:set:' + input.app + ':' + input.id, doc);
 			});
 		} else {
@@ -23,7 +29,12 @@ MongoClient.connect(url, function(err, db) {
 	});
 
 	events.on('data:get:all', function (input) {
-		store.find({'_meta.access.app': input.key, '_meta.access.read': true}).toArray(function (err, docs) {
+		store.find({
+            '$and': [
+                {'_meta.access.app': input.key}
+                , {'_meta.access.read': true}
+            ]
+        }).toArray(function (err, docs) {
 			events.emit('data:set:all:' + input.key, docs);
 		});
 	});
