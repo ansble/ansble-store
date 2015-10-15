@@ -151,18 +151,19 @@ events.on('route:/api/v1/:app/:id:put', function (connection) {
 
 		if(valid && data[1] !== null){
 			parser(connection, function (body) {
-				events.once('data:saved:' + connection.params.id, function (data) {
-					if(data){
-						connection.res.send(body);
-					} else {
-						events.emit('error:404', connection);
-					}
-				});
 
-				//add a typecheck here before proceeding...
-				if(Array.isArray(body)){
-					events.emit('error:500', {connection: connection, message: 'You can only PUT a single object'});
-				} else {
+                //add a typecheck here before proceeding...
+                if(Array.isArray(body)){
+                    events.emit('error:500', {connection: connection, message: 'You can only PUT a single object'});
+                } else {
+    				events.once('data:saved:' + connection.params.id, function (data) {
+                        if(data){
+    						connection.res.send(body);
+    					} else {
+    						events.emit('error:404', connection);
+    					}
+    				});
+
 					events.emit('data:update', {key: connection.params.app, id: connection.params.id, data:body});
 				}
 			});

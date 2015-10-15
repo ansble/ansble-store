@@ -1,6 +1,5 @@
 var crypto = require('crypto')
 	, mongo = require('mongodb')
-	, BSON = mongo.BSONPure
 	, monthArray = [
 		'Jan'
 		, 'Feb'

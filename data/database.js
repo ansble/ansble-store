@@ -67,12 +67,11 @@ MongoClient.connect(url, function(err, db) {
 	});
 
 	events.on('data:update', function (input) {
-		console.log(input);
-		input._meta.updatedDate = new Date();
-		input._id = utils.convertToMongoID(input._id);
+		input.data._meta.updatedDate = new Date();
+		input.data._id = utils.convertToMongoID(input.data._id);
 
-		store.update({'_id': input._id}, input, function (err, result) {
-			events.emit('data:saved:' + input.id, (result === 1));
+		store.update({'_id': input.data._id}, input.data, function (err, result) {
+			events.emit('data:saved:' + input.data._id, (result.result.ok === 1));
 		});
 
 	});
