@@ -1,6 +1,5 @@
 var crypto = require('crypto')
 	, mongo = require('mongodb')
-	, BSON = mongo.BSONPure
 	, monthArray = [
 		'Jan'
 		, 'Feb'
@@ -36,7 +35,7 @@ var crypto = require('crypto')
 		var id = idIn;
 
 		try{
-			id = new BSON.ObjectID(id);
+			id = new mongo.ObjectID(id);
 		}catch(e){}
 
 		return id;
