@@ -2,6 +2,7 @@ var events = require('monument').events
 	, parser = require('monument').parser
 	, crypto = require('crypto')
 	, getID = require('../utils').generateID
+    , tagFilter = require('../utils').filterTags
 
 	, schema = require('../data/schemas')
 	, sandbox = require('sandbox')
@@ -48,7 +49,7 @@ events.on('route:/api:post', function (connection) {
 
 events.on('route:/api/v1/:app:get', function (connection) {
 	'use strict';
-	
+
 
 	if(typeof connection.req.headers.authorization !== 'undefined'){
 		events.once('token:verify:' + connection.req.headers.authorization, function (valid) {
@@ -59,7 +60,11 @@ events.on('route:/api/v1/:app:get', function (connection) {
 					} else {
 						//TODO: grab the allowed domains and use them to set CORS
 						// connection.res.setHeader('Access-Control-Allow-Origin', valid.)
-						connection.res.send(data);
+                        if(typeof connection.query.tags !== 'undefined' && Array.isArray(data)){
+                            connection.res.send(data.filter(tagFilter(connection.query.tags)));
+                        } else {
+						  connection.res.send(data);
+                        }
 					}
 
 				});
@@ -74,7 +79,7 @@ events.on('route:/api/v1/:app:get', function (connection) {
 	} else {
 		events.emit('error:401', connection);
 	}
-	
+
 });
 
 events.on('route:/api/v1/:app:post', function (connection) {
@@ -83,7 +88,8 @@ events.on('route:/api/v1/:app:post', function (connection) {
 	if(typeof connection.req.headers.authorization !== 'undefined'){
 		events.once('token:verify:' + connection.req.headers.authorization, function (valid) {
 			if(valid && valid.app === connection.params.app){
-				parser(connection, function (body) {					
+				parser(connection, function (body) {
+
 					id = crypto.createHash('sha1').update(JSON.stringify(body)).digest('hex');
 
 					events.once('data:saved:' + id, function (data) {
@@ -136,27 +142,28 @@ events.on('route:/api/v1/:app/:id:get', function (connection) {
 
 events.on('route:/api/v1/:app/:id:put', function (connection) {
 	'use strict';
-	
+
 	events.required([
 			'token:verify:' + connection.req.headers.authorization
 			, 'data:set:' + connection.params.app + ':' + connection.params.id
 		], function (data) {
 		var valid = (data[0] && data[0].app === connection.params.app);
-		
+
 		if(valid && data[1] !== null){
 			parser(connection, function (body) {
-				events.once('data:saved:' + connection.params.id, function (data) {
-					if(data){
-						connection.res.send(body);
-					} else {
-						events.emit('error:404', connection);
-					}
-				});
 
-				//add a typecheck here before proceeding...
-				if(Array.isArray(body)){
-					events.emit('error:500', {connection: connection, message: 'You can only PUT a single object'});
-				} else {
+                //add a typecheck here before proceeding...
+                if(Array.isArray(body)){
+                    events.emit('error:500', {connection: connection, message: 'You can only PUT a single object'});
+                } else {
+    				events.once('data:saved:' + connection.params.id, function (data) {
+                        if(data){
+    						connection.res.send(body);
+    					} else {
+    						events.emit('error:404', connection);
+    					}
+    				});
+
 					events.emit('data:update', {key: connection.params.app, id: connection.params.id, data:body});
 				}
 			});
@@ -172,7 +179,7 @@ events.on('route:/api/v1/:app/:id:put', function (connection) {
 events.on('route:/api/v1/:app/:id:delete', function (connection) {
 	'use strict';
 
-	
+
 	if(typeof connection.req.headers.authorization !== 'undefined'){
 		events.required(['token:verify:' + connection.req.headers.authorization, 'data:set:' + connection.params.app + ':' + connection.params.id], function (arr) {
 			var valid = (arr[0] && arr[0].app === connection.params.app)
@@ -226,8 +233,6 @@ events.on('route:/api/v1/:app:report', function (connection) {
 								}
 							});
 
-							console.log(execString);
-
 							s.run('data = ' + JSON.stringify(data) + '; ' + execString, function (output) {
 								connection.res.send(output.result);
 							});
@@ -246,5 +251,5 @@ events.on('route:/api/v1/:app:report', function (connection) {
 	} else {
 		events.emit('error:401', connection);
 	}
-	
+
 });
