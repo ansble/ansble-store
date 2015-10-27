@@ -97,7 +97,14 @@ events.on('route:/api/v1/:app:post', function (connection) {
 					});
 
 					//add a typecheck here before proceeding...
-					events.emit('data:new', {key: connection.params.app, id: id, data:body});
+
+                    if(typeof body !== 'object' || Object.keys(body).length === 0){
+                        //malformed content was passed in...
+                        events.off('data:saved:' + id);
+                        events.emit('error:500', 'Malformed data was sent to the service. We\'re sorry. Try again.');
+                    } else {
+					   events.emit('data:new', {key: connection.params.app, id: id, data:body});
+                    }
 				});
 			} else {
 				events.emit('error:401', connection);
