@@ -44,8 +44,6 @@ MongoClient.connect(url, function(err, db) {
 		var data = JSON.parse(JSON.stringify(input.data))
 			, id = crypto.createHash('sha1').update(JSON.stringify(input.data)).digest('hex');
 
-        console.log('\n\n', input, '\n\n');
-
         data._meta = {
 			access: [
 				{app: input.key, read:true, write:true, del:true}
@@ -55,7 +53,6 @@ MongoClient.connect(url, function(err, db) {
 			, createdBy: input.key
 		};
 
-		console.log(data);
 		store.insert(data, function(err,doc) {
 			if(err){
 				console.log(err);
