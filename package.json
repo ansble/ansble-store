@@ -7,7 +7,7 @@
     "bower": "^1.5.3",
     "jsonwebtoken": "^5.4.0",
     "mongodb": "^2.0.45",
-    "monument": "^2.0.5",
+    "monument": "^2.1.1",
     "sandbox": "^0.8.6"
   },
   "devDependencies": {
@@ -35,9 +35,9 @@
     "postinstall": "bower install"
   },
   "author": "Daniel Sellers",
-  "repository": "https://github.com/designfrontier/dfredesign.git",
+  "repository": "https://github.com/ansble/ansble-store.git",
   "license": "MIT",
   "engines": {
-    "node": "4.1.x"
+    "node": "4.2.x"
   }
 }
