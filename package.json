@@ -38,6 +38,6 @@
   "repository": "https://github.com/ansble/ansble-store.git",
   "license": "MIT",
   "engines": {
-    "node": "4.2.x"
+    "node": "^5.1.1"
   }
 }
