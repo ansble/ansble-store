@@ -4,6 +4,7 @@ var events = require('monument').events
 
 events.on('route:/templates:get', function (connection) {
 	'use strict';
-	
-	connection.res.send(authTemplate.toString());
+	connection.res.setHeader('Content-Type', 'application/javascript');
+    connection.res.setHeader('Vary', 'Accept-Encoding');
+    connection.res.end(authTemplate.toString());
 });
