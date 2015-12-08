@@ -1,55 +1,56 @@
-var assert = require('chai').assert
-	, schemas = require('./schemas');
+/* eslint-env node, mocha */
+'use strict';
 
-describe('Schema Tests', function () {
-	'use strict';
+const assert = require('chai').assert
+    , schemas = require('./schemas');
 
-	describe('jwt schema test', function () {
-		it('should return a jwt schema', function () {
-			var jwt = schemas.jwt;
+describe('Schema Tests', () => {
+    describe('jwt schema test', () => {
+        it('should return a jwt schema', () => {
+            const jwt = schemas.jwt;
 
-			assert.strictEqual(jwt.scopes, 'array');
-			assert.strictEqual(jwt.app, 'string');
-			assert.strictEqual(jwt.jti, 'string');
-		});
+            assert.strictEqual(jwt.scopes, 'array');
+            assert.strictEqual(jwt.app, 'string');
+            assert.strictEqual(jwt.jti, 'string');
+        });
 
-		it('should validate a jwt when passed into the validate function', function () {
-			var jwt = {
-				scopes: []
-				, app: 'some-id-of-an-app'
-				, jti: '12345678532234234'
-			};
+        it('should validate a jwt when passed into the validate function', () => {
+            const jwt = {
+                scopes: []
+                , app: 'some-id-of-an-app'
+                , jti: '12345678532234234'
+            };
 
-			assert.strictEqual(schemas.check(jwt, schemas.jwt), true);
-		});
+            assert.strictEqual(schemas.check(jwt, schemas.jwt), true);
+        });
 
-		it('should return an account schema', function () {
-			var app = schemas.account;
+        it('should return an account schema', () => {
+            const app = schemas.account;
 
-			assert.strictEqual(app.key, 'string');
-			assert.strictEqual(app.createdDate, 'date');
-			assert.strictEqual(app.contact, 'object');
-			assert.strictEqual(app.payment, 'object');
-			assert.strictEqual(app.url, 'string');
-			assert.strictEqual(app.key, 'string');
-			assert.strictEqual(app.name, 'string');
-			assert.strictEqual(app.description, 'string');
-		});
+            assert.strictEqual(app.key, 'string');
+            assert.strictEqual(app.createdDate, 'date');
+            assert.strictEqual(app.contact, 'object');
+            assert.strictEqual(app.payment, 'object');
+            assert.strictEqual(app.url, 'string');
+            assert.strictEqual(app.key, 'string');
+            assert.strictEqual(app.name, 'string');
+            assert.strictEqual(app.description, 'string');
+        });
 
-		it('should return a contact schema', function () {
-			var test = schemas.contact;
+        it('should return a contact schema', () => {
+            const test = schemas.contact;
 
-			assert.strictEqual(test.name, 'string');
-			assert.strictEqual(test.email, 'string');
-			assert.strictEqual(test.phone, 'string');
-		});
+            assert.strictEqual(test.name, 'string');
+            assert.strictEqual(test.email, 'string');
+            assert.strictEqual(test.phone, 'string');
+        });
 
-		it('should return a payment schema', function () {
-			var test = schemas.payment;
+        it('should return a payment schema', () => {
+            const test = schemas.payment;
 
-			assert.strictEqual(test.token, 'string');
-			assert.strictEqual(test.expires, 'date');
-		});
+            assert.strictEqual(test.token, 'string');
+            assert.strictEqual(test.expires, 'date');
+        });
 
-	});
+    });
 });
