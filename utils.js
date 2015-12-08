@@ -1,45 +1,43 @@
 var crypto = require('crypto')
-	, mongo = require('mongodb')
-	, monthArray = [
-		'Jan'
-		, 'Feb'
-		, 'Mar'
-		, 'Apr'
-		, 'Jun'
-		, 'Jul'
-		, 'Aug'
-		, 'Sep'
-		, 'Oct'
-		, 'Nov'
-		, 'Dec'
-	]
-	, formatDate = function (dateString) {
-		'use strict';
+    , mongo = require('mongodb')
+    , createUUID = require('monument').createUUID
+    , monthArray = [
+        'Jan'
+        , 'Feb'
+        , 'Mar'
+        , 'Apr'
+        , 'Jun'
+        , 'Jul'
+        , 'Aug'
+        , 'Sep'
+        , 'Oct'
+        , 'Nov'
+        , 'Dec'
+    ]
+    , formatDate = function (dateString) {
+        'use strict';
 
-		var dateObj = new Date(dateString);
+        var dateObj = new Date(dateString);
 
-		return dateObj.getDate() + ' ' + monthArray[dateObj.getMonth() - 1] + ' ' + dateObj.getFullYear();
-	}
+        return dateObj.getDate() + ' ' + monthArray[dateObj.getMonth() - 1] + ' ' + dateObj.getFullYear();
+    }
 
-	, generateID = function(salt){
-		'use strict';
+    , generateID = function(salt){
+        'use strict';
 
-		var randString = crypto.randomBytes(48).toJSON().data.join('')
-			, jti = crypto.createHash('sha1');
+        return createUUID();
+    }
 
-		return jti.update(salt + new Date().getTime() + randString).digest('hex');
-	}
+    , mongoID = function (idIn) {
+        'use strict';
+        var id = idIn;
 
-	, mongoID = function (idIn) {
-		'use strict';
-		var id = idIn;
+        try{
+            id = new mongo.ObjectID(id);
+        }catch(e){}
 
-		try{
-			id = new mongo.ObjectID(id);
-		}catch(e){}
-
-		return id;
-	}
+        return id;
+    }
 
     , filterTags = function (tags) {
         'use strict';
@@ -62,8 +60,14 @@ var crypto = require('crypto')
     };
 
 module.exports = {
-	formatDate: formatDate
-	, generateID: generateID
-	, convertToMongoID: mongoID
+    formatDate: formatDate
+    , generateID: generateID
+    , convertToMongoID: mongoID
     , filterTags: filterTags
+    , isUndefined: (item) => {
+          return typeof item === 'undefined';
+      }
+    , isDefined: (item) => {
+          return typeof item !== 'undefined';
+      }
 };

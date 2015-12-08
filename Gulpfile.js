@@ -13,7 +13,8 @@ var gulp = require('gulp')
     , handlebars = require('gulp-handlebars')
     , defineModule = require('gulp-define-module')
     , declare = require('gulp-declare')
-    
+    , eslint = require('gulp-eslint')
+
     //for restarting node on server file changes...
     , spawn = require('child_process').spawn
     , node;
@@ -38,7 +39,7 @@ gulp.task('server', function() {
     if (node) {
         node.kill();
     }
-    
+
     node = spawn('node', ['app.js'], {stdio: 'inherit'});
 
     node.on('close', function (code) {
@@ -46,6 +47,13 @@ gulp.task('server', function() {
           gulp.log('Error detected, waiting for changes...');
         }
     });
+});
+
+gulp.task('lint', () => {
+    return gulp.src([ '**/*.js', '!templates/**/*', '!node_modules/**/*', '!coverage/**/*', '!test_stubs/**/*' ])
+        .pipe(eslint('./.eslintrc'))
+        .pipe(eslint.format())
+        .pipe(eslint.failAfterError());
 });
 
 gulp.task('test', function (){
@@ -57,7 +65,7 @@ gulp.task('test', function (){
 
 gulp.task('localBuild', ['buildTemplates'], function(){
     'use strict';
-    
+
     gulp.src([
             'public/javascripts/libs/*.js'
             , '!public/javascripts/libs/zepto.min.js'
@@ -101,7 +109,7 @@ gulp.task('buildTemplates', function(){
 
 gulp.task('build:prod', ['buildTemplates', 'localBuild'], function(){
     'use strict';
-    
+
     gulp.src([
             'public/javascripts/action/*.min.js'
             , 'public/javascripts/built/*.min.js'
@@ -113,7 +121,7 @@ gulp.task('build:prod', ['buildTemplates', 'localBuild'], function(){
 
 gulp.task('dev', ['server', 'sass'], function () {
     'use strict';
-    
+
     gulp.watch([
                 './public/stylesheets/main.scss'
                 , './public/stylesheets/colors.scss'
