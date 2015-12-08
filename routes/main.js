@@ -1,8 +1,8 @@
-var events = require('monument').events
-	, mainTemplate = require('../templates/main');
+'use strict';
 
-events.on('route:/:get', function (connection) {
-	'use strict';
-	
-	connection.res.send(mainTemplate());
+const events = require('monument').events
+    , mainTemplate = require('../templates/main');
+
+events.on('route:/:get', (connection) => {
+    connection.res.send(mainTemplate());
 });
