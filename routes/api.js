@@ -1,6 +1,6 @@
 var events = require('monument').events
+    , createUUID = require('monument').createUUID
 	, parser = require('monument').parser
-	, crypto = require('crypto')
 	, getID = require('../utils').generateID
     , tagFilter = require('../utils').filterTags
 
@@ -23,7 +23,7 @@ events.on('route:/api:post', function (connection) {
 	'use strict';
 
 	parser(connection, function (body) {
-		body.key = getID(crypto.randomBytes(48).toJSON().data.join(''));
+		body.key = createUUID();
 		body.createdDate = new Date();
 
 		//TODO: add payment system
@@ -90,7 +90,7 @@ events.on('route:/api/v1/:app:post', function (connection) {
 			if(valid && valid.app === connection.params.app){
 				parser(connection, function (body) {
 
-					id = crypto.createHash('sha1').update(JSON.stringify(body)).digest('hex');
+					id = createUUID();
 
 					events.once('data:saved:' + id, function (data) {
 						connection.res.send(data);
