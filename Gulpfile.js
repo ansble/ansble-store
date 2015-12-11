@@ -50,13 +50,21 @@ gulp.task('server', function() {
 });
 
 gulp.task('lint', () => {
-    return gulp.src([ '**/*.js', '!templates/**/*', '!node_modules/**/*', '!coverage/**/*', '!test_stubs/**/*' ])
+    return gulp.src([
+        '**/*.js'
+        , '!templates/**/*'
+        , '!node_modules/**/*'
+        , '!coverage/**/*'
+        , '!test_stubs/**/*'
+        , '!Gulpfile.js'
+        , '!public/**/*'
+    ])
         .pipe(eslint('./.eslintrc'))
         .pipe(eslint.format())
         .pipe(eslint.failAfterError());
 });
 
-gulp.task('test', function (){
+gulp.task('test', [ 'lint' ], function (){
     'use strict';
 
     return gulp.src(['**/**_test.js', '!node_modules/**/*'], {read: false})

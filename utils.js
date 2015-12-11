@@ -1,5 +1,6 @@
-var crypto = require('crypto')
-    , mongo = require('mongodb')
+'use strict';
+
+const mongo = require('mongodb')
     , createUUID = require('monument').createUUID
     , monthArray = [
         'Jan'
@@ -14,48 +15,50 @@ var crypto = require('crypto')
         , 'Nov'
         , 'Dec'
     ]
-    , formatDate = function (dateString) {
-        'use strict';
+    , formatDate = (dateString) => {
+        const dateObj = new Date(dateString);
 
-        var dateObj = new Date(dateString);
-
-        return dateObj.getDate() + ' ' + monthArray[dateObj.getMonth() - 1] + ' ' + dateObj.getFullYear();
+        return `${dateObj.getDate()} ${monthArray[dateObj.getMonth() - 1]} ${dateObj.getFullYear()}`;
     }
 
-    , generateID = function(salt){
-        'use strict';
-
+    , generateID = () => {
         return createUUID();
     }
 
-    , mongoID = function (idIn) {
-        'use strict';
-        var id = idIn;
+    , mongoID = (idIn) => {
+        let id = idIn;
 
-        try{
+        try {
             id = new mongo.ObjectID(id);
-        }catch(e){}
+        } catch (e) {
+            // an error... that we don't care about
+        }
 
         return id;
     }
 
-    , filterTags = function (tags) {
-        'use strict';
+    , isUndefined = (item) => {
+        return typeof item === 'undefined';
+    }
 
-        if(!Array.isArray(tags)){
-            tags = [tags];
-        }
+    , isDefined = (item) => {
+        return typeof item !== 'undefined';
+    }
 
-        return function (item) {
-            var match = false;
+    , filterTags = (tagsIn) => {
+        const tags = Array.isArray(tagsIn) ? tags : [ tags ]
+            , isMatch = (itemTags, tag) => {
+                return isDefined(itemTags) && Array.isArray(itemTags) && itemTags.indexOf(tag) >= 0;
+            };
 
-            tags.forEach(function (tag) {
-                if(typeof item.tags !== 'undefined' && Array.isArray(item.tags) && item.tags.indexOf(tag) >= 0){
-                    match = true;
+        return (item) => {
+            return tags.reduce((match, tag) => {
+                if (isMatch(item.tags, tag)) {
+                    return true;
+                } else {
+                    return match;
                 }
-            });
-
-            return match;
+            }, false);
         };
     };
 
@@ -64,10 +67,6 @@ module.exports = {
     , generateID: generateID
     , convertToMongoID: mongoID
     , filterTags: filterTags
-    , isUndefined: (item) => {
-          return typeof item === 'undefined';
-      }
-    , isDefined: (item) => {
-          return typeof item !== 'undefined';
-      }
+    , isUndefined: isUndefined
+    , isDefined: isDefined
 };
