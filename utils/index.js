@@ -16,9 +16,10 @@ const mongo = require('mongodb')
         , 'Dec'
     ]
     , formatDate = (dateString) => {
-        const dateObj = new Date(dateString);
+        const dateObj = new Date(dateString)
+            , month = monthArray[dateObj.getMonth() - 1];
 
-        return `${dateObj.getDate()} ${monthArray[dateObj.getMonth() - 1]} ${dateObj.getFullYear()}`;
+        return `${dateObj.getDate()} ${month} ${dateObj.getFullYear()}`;
     }
 
     , generateID = () => {
@@ -35,6 +36,10 @@ const mongo = require('mongodb')
         }
 
         return id;
+    }
+
+    , clone = (item) => {
+        return JSON.parse(JSON.stringify(item));
     }
 
     , isUndefined = (item) => {
@@ -69,4 +74,5 @@ module.exports = {
     , filterTags: filterTags
     , isUndefined: isUndefined
     , isDefined: isDefined
+    , clone: clone
 };

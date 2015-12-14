@@ -28,7 +28,7 @@ events.on('route:/api:post', (connection) => {
         // TODO: add payment system
         body.payment = {};
 
-        events.once('token:created:' + body.key, (token) => {
+        events.once(`token:created:${body.key}`, (token) => {
             // console.log(body);
             connection.res.send({ auth: token, key: body.key });
         });
@@ -48,9 +48,9 @@ events.on('route:/api:post', (connection) => {
 
 events.on('route:/api/v1/:app:get', (connection) => {
     if (isDefined(connection.req.headers.authorization)){
-        events.once('token:verify:' + connection.req.headers.authorization, (valid) => {
+        events.once(`token:verify:${connection.req.headers.authorization}`, (valid) => {
             if (valid && valid.app === connection.params.app){
-                events.once('data:set:all:' + connection.params.app, (data) => {
+                events.once(`data:set:all:${connection.params.app}`, (data) => {
                     if (data === null){
                         events.emit('error:404', connection);
                     } else {
@@ -81,25 +81,32 @@ events.on('route:/api/v1/:app:get', (connection) => {
 events.on('route:/api/v1/:app:post', (connection) => {
     let id;
 
-    if (typeof connection.req.headers.authorization !== 'undefined'){
-        events.once('token:verify:' + connection.req.headers.authorization, (valid) => {
+    if (isDefined(connection.req.headers.authorization)) {
+        events.once(`token:verify:${connection.req.headers.authorization}`, (valid) => {
             if (valid && valid.app === connection.params.app){
                 parser(connection, (body) => {
 
+                    // get a UUID
                     id = generateID();
 
-                    events.once('data:saved:' + id, (data) => {
+                    events.once(`data:saved:${id}`, (data) => {
                         connection.res.send(data);
                     });
 
                     // add a typecheck here before proceeding...
-
-                    if (typeof body !== 'object' || Object.keys(body).length === 0){
+                    if (typeof body !== 'object' || Object.keys(body).length === 0) {
                         // malformed content was passed in...
-                        events.off('data:saved:' + id);
-                        events.emit('error:500', 'Malformed data was sent to the service. We\'re sorry. Try again.');
+                        events.off(`data:saved:${id}`);
+                        events.emit('error:500', {
+                            message: 'It looks like you sent us a malformed object! Try again bub.'
+                            , connection: connection
+                        });
                     } else {
-                        events.emit('data:new', { key: connection.params.app, id: id, data: body });
+                        events.emit('data:new', {
+                            key: connection.params.app
+                            , id: id
+                            , data: body
+                        });
                     }
                 });
             } else {
@@ -114,14 +121,14 @@ events.on('route:/api/v1/:app:post', (connection) => {
 });
 
 events.on('route:/api/v1/:app/:id:get', (connection) => {
-    if (isDefined(connection.req.headers.authorization)){
+    if (isDefined(connection.req.headers.authorization)) {
         events.required([
-            'token:verify:' + connection.req.headers.authorization
-            , 'data:set:' + connection.params.app + ':' + connection.params.id
+            `token:verify:${connection.req.headers.authorization}`
+            , `data:set:${connection.params.app}:${connection.params.id}`
         ], (arr) => {
             const valid = arr[0] && arr[0].app === connection.params.app;
 
-            if (valid){
+            if (valid) {
                 if (arr[1] === null){
                     events.emit('error:404', connection);
                 } else {
@@ -142,12 +149,12 @@ events.on('route:/api/v1/:app/:id:get', (connection) => {
 
 events.on('route:/api/v1/:app/:id:put', (connection) => {
     events.required([
-        'token:verify:' + connection.req.headers.authorization
-        , 'data:set:' + connection.params.app + ':' + connection.params.id
+        `token:verify:${connection.req.headers.authorization}`
+        , `data:set:${connection.params.app}:${connection.params.id}`
     ], (data) => {
         const valid = data[0] && data[0].app === connection.params.app;
 
-        if (valid && data[1] !== null){
+        if (valid && data[1] !== null) {
             parser(connection, (body) => {
                 // add a typecheck here before proceeding...
                 if (Array.isArray(body)){
@@ -156,7 +163,7 @@ events.on('route:/api/v1/:app/:id:put', (connection) => {
                         , message: 'You can only PUT a single object'
                     });
                 } else {
-                    events.once('data:saved:' + connection.params.id, (dataSaved) => {
+                    events.once(`data:saved:${connection.params.id}`, (dataSaved) => {
                         if (dataSaved){
                             connection.res.send(body);
                         } else {
@@ -181,8 +188,11 @@ events.on('route:/api/v1/:app/:id:put', (connection) => {
 });
 
 events.on('route:/api/v1/:app/:id:delete', (connection) => {
-    if (isDefined(connection.req.headers.authorization)){
-        events.required([ 'token:verify:' + connection.req.headers.authorization, 'data:set:' + connection.params.app + ':' + connection.params.id ], (arr) => {
+    if (isDefined(connection.req.headers.authorization)) {
+        events.required([
+            `token:verify:${connection.req.headers.authorization}`
+            , `data:set:${connection.params.app}:${connection.params.id}`
+        ], (arr) => {
             const valid = arr[0] && arr[0].app === connection.params.app;
             let allowed;
 
@@ -194,7 +204,7 @@ events.on('route:/api/v1/:app/:id:delete', (connection) => {
 
             if (valid && allowed.length > 0) {
                 // this item can be deleted with this key
-                events.once('data:deleted:' + connection.params.id, (done) => {
+                events.once(`data:deleted:${connection.params.id}`, (done) => {
                     connection.res.send({ success: done });
                 });
 
@@ -214,10 +224,10 @@ events.on('route:/api/v1/:app/:id:delete', (connection) => {
 
 events.on('route:/api/v1/:app:report', (connection) => {
     if (isDefined(connection.req.headers.authorization)){
-        events.once('token:verify:' + connection.req.headers.authorization, (valid) => {
+        events.once(`token:verify:${connection.req.headers.authorization}`, (valid) => {
             if (valid && valid.app === connection.params.app){
                 events.once(`data:set:all:${connection.params.app}`, (data) => {
-                    if (data === null){
+                    if (data === null) {
                         events.emit('error:404', connection);
                     } else {
                         // TODO: grab the allowed domains and use them to set CORS
@@ -229,12 +239,12 @@ events.on('route:/api/v1/:app:report', (connection) => {
                             let execString = 'result = data';
 
                             body.forEach((item) => {
-                                if (item.type === 'filter' || item.type === 'map' || item.type === 'reduce'){
-                                    execString += '.' + item.type + '(' + item.body + ')';
+                                if (item.type === 'filter' || item.type === 'map' || item.type === 'reduce') {
+                                    execString += `.${item.type}(${item.body})`;
                                 }
                             });
 
-                            s.run('data = ' + JSON.stringify(data) + '; ' + execString, (output) => {
+                            s.run(`data = ${JSON.stringify(data)}; ${execString}`, (output) => {
                                 connection.res.send(output.result);
                             });
                         });
@@ -252,5 +262,4 @@ events.on('route:/api/v1/:app:report', (connection) => {
     } else {
         events.emit('error:401', connection);
     }
-
 });

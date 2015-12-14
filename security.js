@@ -2,25 +2,15 @@
 
 const jwt = require('jsonwebtoken')
     , events = require('monument').events
-    , fs = require('fs')
     , schema = require('./data/schemas')
     , salt = 'it was the best of times it was the worst of times. It was the age of reason...'
     , createJTI = require('./utils').generateID
 
     , MongoClient = require('mongodb').MongoClient
-    , url = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/myproject';
-
-let key
-    , pubKey;
-
-// import the public key for this environment
-if (typeof process.env.KEY === 'undefined') {
-    key = fs.readFileSync('./keys/dev_key');
-    pubKey = fs.readFileSync('./keys/dev_key.pub');
-} else {
-    key = process.env.KEY;
-    pubKey = process.env.PUB_KEY;
-}
+    , env = require('./utils/env')
+    , key = env.KEY
+    , pubKey = env.PUB_KEY
+    , url = env.MONGO_URL;
 
 MongoClient.connect(url, (err, db) => {
     const ansble = db.collection('ansble');

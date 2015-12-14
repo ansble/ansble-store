@@ -31,18 +31,17 @@ const jwtSchema = {
         const schemaKeys = Object.keys(schemaIn)
             , objectKeys = Object.keys(objectIn);
 
-        let check = true;
-
         // must have the same number of keys
-        check = check && schemaKeys.length === objectKeys.length;
-
+        let check = schemaKeys.length === objectKeys.length;
 
         // and all the keys must match in name and type
         schemaKeys.forEach((key) => {
+            const isObject = typeof objectIn[key] === 'object';
+
             if (schemaIn[key] === 'array') {
-                check = check && typeof objectIn[key] === 'object' && Array.isArray(objectIn[key]);
+                check = check && isObject && Array.isArray(objectIn[key]);
             } else if (schemaIn[key] === 'date') {
-                check = check && typeof objectIn[key] === 'object' && !isNaN(new Date(objectIn[key]).getTime());
+                check = check && isObject && !isNaN(new Date(objectIn[key]).getTime());
             } else {
                 check = check && typeof objectIn[key] === schemaIn[key];
             }

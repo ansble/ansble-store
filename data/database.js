@@ -1,8 +1,9 @@
 'use strict';
 
 const events = require('monument').events
+    , env = require('../utils/env')
     , MongoClient = require('mongodb').MongoClient
-    , url = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/myproject'
+    , url = env.MONGO_URL
     , utils = require('../utils');
 
 
@@ -18,7 +19,12 @@ MongoClient.connect(url, (err, db) => {
                 $and: [
                     { '_meta.access.app': input.app }
                     , { '_meta.access.read': true }
-                    , { _id: id }
+                    , {
+                        $or: [
+                            { '_meta.id': id }
+                            , { _id: id }
+                        ]
+                    }
                 ]
             }, (findOneError, doc) => {
                 events.emit(`data:set:${input.app}:${input.id}`, doc);
@@ -41,7 +47,7 @@ MongoClient.connect(url, (err, db) => {
 
     events.on('data:new', (input) => {
         // clone data
-        const data = JSON.parse(JSON.stringify(input.data));
+        const data = utils.clone(input.data);
 
         data._meta = {
             access: [
@@ -51,6 +57,13 @@ MongoClient.connect(url, (err, db) => {
             , updatedDate: new Date()
             , createdBy: input.key
         };
+
+        // remove any id the user might have set in the object through _id
+        //  and put it in _meta where we will query it
+        if (data.id || data._id) {
+            data._meta.id = data.id || data._id;
+            data._id = undefined;
+        }
 
         store.insert(data, (insertErr, doc) => {
             if (insertErr) {

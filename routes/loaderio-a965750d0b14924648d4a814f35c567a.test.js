@@ -13,8 +13,10 @@ describe('/loaderio-a965750d0b14924648d4a814f35c567a route file tests', () => {
     });
 
     it('should respond to route:/loaderio-a965750d0b14924648d4a814f35c567a:get', () => {
+        const response = 'loaderio-a965750d0b14924648d4a814f35c567a';
+
         events.emit('route:/loaderio-a965750d0b14924648d4a814f35c567a:get', fakeConnection);
 
-        assert.strictEqual(fakeConnection.out().response, 'loaderio-a965750d0b14924648d4a814f35c567a');
+        assert.strictEqual(fakeConnection.out().response, response);
     });
 });
