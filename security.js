@@ -23,7 +23,6 @@ MongoClient.connect(url, (err, db) => {
 
     events.on('token:verify', (token) => {
         jwt.verify(token, pubKey, { algorithm: 'RS256' }, (jwtError, decoded) => {
-            console.log(jwtError, decoded);
             if (jwtError){
                 events.emit(`token:verify:${token}`, false);
             } else {
