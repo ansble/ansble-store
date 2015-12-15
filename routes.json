@@ -1,9 +1,6 @@
 {
-	"/": ["get"],
-	"/api": ["get", "post"],
-	"/api/v1/:app": ["get", "post", "report"],
-	"/api/v1/:app/:id": ["get", "put", "delete"],
-	"/templates": ["get"],
-	"/about": ["get"],
-    "/loaderio-a965750d0b14924648d4a814f35c567a": ["get"]
+	"/": ["get", "post"],
+	"/:app": ["get", "post", "report"],
+	"/:app/:id": ["get", "put", "delete"],
+    "/loaderio-1b3b503e8a877429e0f6cbd83baf0475": ["get"]
 }

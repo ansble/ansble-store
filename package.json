@@ -16,6 +16,7 @@
     "gulp-concat": "^2.6.0",
     "gulp-declare": "^0.3.0",
     "gulp-define-module": "^0.1.4",
+    "gulp-eslint": "^1.1.1",
     "gulp-handlebars": "^4.0.0",
     "gulp-hogan-compile": "^0.4.1",
     "gulp-jshint": "^2.0.0",

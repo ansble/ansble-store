@@ -1,99 +1,90 @@
-var jwt = require('jsonwebtoken')
-	, events = require('monument').events
-	, fs = require('fs')
-	, schema = require('./data/schemas')
-	, salt = 'it was the best of times it was the worst of times. It was the age of reason...'
-	, createJTI = require('./utils').generateID
+'use strict';
 
-	, MongoClient = require('mongodb').MongoClient
-	, url = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/myproject'
+const jwt = require('jsonwebtoken')
+    , events = require('monument').events
+    , schema = require('./data/schemas')
+    , salt = 'it was the best of times it was the worst of times. It was the age of reason...'
+    , createJTI = require('./utils').generateID
 
-	, key
-	, pubKey;
+    , MongoClient = require('mongodb').MongoClient
+    , env = require('./utils/env')
+    , key = env.KEY
+    , pubKey = env.PUB_KEY
+    , url = env.MONGO_URL;
 
-//import the public key for this environment
-if(typeof process.env.KEY === 'undefined') {
-	key = fs.readFileSync('./keys/dev_key');
-	pubKey = fs.readFileSync('./keys/dev_key.pub');
-} else {
-	key = process.env.KEY;
-	pubKey = process.env.PUB_KEY;
-}
+MongoClient.connect(url, (err, db) => {
+    const ansble = db.collection('ansble');
 
-MongoClient.connect(url, function(err, db) {
-	'use strict';
+    console.log('db connected');
 
-	var ansble = db.collection('ansble');
+    if (err) {
+        events.emit('error:db', err);
+    }
 
-	console.log('db connected');
+    events.on('token:verify', (token) => {
+        jwt.verify(token, pubKey, { algorithm: 'RS256' }, (jwtError, decoded) => {
+            if (jwtError){
+                events.emit(`token:verify:${token}`, false);
+            } else {
+                events.emit(`token:verify:${token}`, decoded);
+            }
+        });
+    });
 
-	if(err) {
-		events.emit('error:db', err);
-	}
+    events.on('token:create', (dataIn) => {
+        let token;
+        // check to see if this app already has a key... and then do stuff
 
-	events.on('token:verify', function (token) {
-		jwt.verify(token, pubKey, { algorithm: 'RS256'}, function (err, decoded) {
-            console.log(err, decoded);
-			if(err){
-				events.emit('token:verify:' + token, false);
-			} else {
-				events.emit('token:verify:' + token, decoded);
-			}
-		});
-	});
+        console.log('new token requested');
+        if (schema.check(dataIn, schema.account)){
+            dataIn.jti = createJTI(salt);
 
-	events.on('token:create', function (dataIn) {
+            ansble.find({ _id: 'application_store' }).toArray((findError, docs) => {
+                const store = {}
+                    , update = {};
 
-		var token;
+                if (typeof docs[0] === 'undefined' || typeof docs[0][dataIn.key] === 'undefined') {
+                    if (typeof docs[0] === 'undefined'){
+                        store._id = 'application_store';
+                        store[dataIn.key] = dataIn;
+                        ansble.insert(store, (insertError, result) => {
+                            console.log(result);
+                        });
+                    } else {
+                        update = {
+                            $set: {}
+                        };
+                        update.$set[dataIn.app] = dataIn;
 
-		//check to see if this app already has a key... and then do stuff
+                        ansble.update({ _id: 'application_store' }, update, (updateErr, result) => {
+                            console.log(updateErr, result);
+                        });
+                    }
 
-		console.log('new token requested');
-		if(schema.check(dataIn, schema.account)){
-			dataIn.jti = createJTI(salt);
+                    // TODO: if we ever use scopes change this
+                    token = jwt.sign({
+                        scopes: []
+                        , app: dataIn.key
+                        , jti: dataIn.jti
+                    }, key, { algorithm: 'RS256' });
+                } else {
+                    token = 'exists';
+                }
 
-			ansble.find({_id: 'application_store'}).toArray(function (err, docs) {
-				var store = {}
-					, update = {};
+                events.emit(`token:created:${dataIn.key}`, token);
+            });
+        } else {
+            events.emit(`token:created:${dataIn.key}`, 'invalid');
+        }
+    });
 
-				if(typeof docs[0] === 'undefined' || typeof docs[0][dataIn.key] === 'undefined'){
-					if(typeof docs[0] === 'undefined'){
-						store._id = 'application_store';
-						store[dataIn.key] = dataIn;
-						ansble.insert(store, function (err, result){
-							console.log(result);
-						});
-					}else{
-						update = {
-							'$set':{}
-						};
-						update.$set[dataIn.app] = dataIn;
+    events.on('token:destroy', () => {
+        // for the destroying in the future
+    });
 
-						ansble.update({_id: 'application_store'}, update, function (err, result) {
-							console.log(err, result);
-						});
-					}
-
-					//TODO: if we ever use scopes change this
-					token = jwt.sign({scopes: [], app: dataIn.key, jti: dataIn.jti}, key, { algorithm: 'RS256'});
-				} else {
-					token = 'exists';
-				}
-
-				events.emit('token:created:' + dataIn.key, token);
-			});
-		} else {
-			events.emit('token:created:' + dataIn.key, 'invalid');
-		}
-	});
-
-	events.on('token:destroy', function () {
-
-	});
-
-	// insertDocuments(db, function() {
-	// db.close();
-	// });
+    // insertDocuments(db, function() {
+    // db.close();
+    // });
 });
 
 
