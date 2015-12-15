@@ -4,7 +4,7 @@ var jwt = require('jsonwebtoken')
 	, schema = require('./data/schemas')
 	, salt = 'it was the best of times it was the worst of times. It was the age of reason...'
 	, createJTI = require('./utils').generateID
-	
+
 	, MongoClient = require('mongodb').MongoClient
 	, url = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/myproject'
 
@@ -30,9 +30,10 @@ MongoClient.connect(url, function(err, db) {
 	if(err) {
 		events.emit('error:db', err);
 	}
-	
+
 	events.on('token:verify', function (token) {
 		jwt.verify(token, pubKey, { algorithm: 'RS256'}, function (err, decoded) {
+            console.log(err, decoded);
 			if(err){
 				events.emit('token:verify:' + token, false);
 			} else {
@@ -50,7 +51,7 @@ MongoClient.connect(url, function(err, db) {
 		console.log('new token requested');
 		if(schema.check(dataIn, schema.account)){
 			dataIn.jti = createJTI(salt);
-			
+
 			ansble.find({_id: 'application_store'}).toArray(function (err, docs) {
 				var store = {}
 					, update = {};
