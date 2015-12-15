@@ -5,48 +5,10 @@ const events = require('monument').events
     , generateID = require('../utils').generateID
     , tagFilter = require('../utils').filterTags
     , isDefined = require('../utils').isDefined
-
-    , schema = require('../data/schemas')
-    , sandbox = require('sandbox')
-
-    , apiTemplate = require('../templates/api');
+    , sandbox = require('sandbox');
 
 
-events.on('route:/api:get', (connection) => {
-    if (isDefined(connection.query.token) && connection.query.token === '550c1afb126db4250aa5f64a'){
-        connection.res.send(apiTemplate());
-    } else {
-        events.emit('error:401', connection);
-    }
-});
-
-events.on('route:/api:post', (connection) => {
-    parser(connection, (body) => {
-        body.key = generateID();
-        body.createdDate = new Date();
-
-        // TODO: add payment system
-        body.payment = {};
-
-        events.once(`token:created:${body.key}`, (token) => {
-            // console.log(body);
-            connection.res.send({ auth: token, key: body.key });
-        });
-
-        // validate the body
-        if (schema.check(body, schema.account)){
-            events.emit('token:create', body);
-        } else {
-            // TODO: actually hook this up once the bug in parser is fixed
-            //  console.log(body);
-            // //error... not an app
-            // events.emit('error:404', connection);
-        }
-
-    });
-});
-
-events.on('route:/api/v1/:app:get', (connection) => {
+events.on('route:/:app:get', (connection) => {
     if (isDefined(connection.req.headers.authorization)){
         events.once(`token:verify:${connection.req.headers.authorization}`, (valid) => {
             if (valid && valid.app === connection.params.app){
@@ -78,7 +40,7 @@ events.on('route:/api/v1/:app:get', (connection) => {
 
 });
 
-events.on('route:/api/v1/:app:post', (connection) => {
+events.on('route:/:app:post', (connection) => {
     let id;
 
     if (isDefined(connection.req.headers.authorization)) {
@@ -120,7 +82,7 @@ events.on('route:/api/v1/:app:post', (connection) => {
     }
 });
 
-events.on('route:/api/v1/:app/:id:get', (connection) => {
+events.on('route:/:app/:id:get', (connection) => {
     if (isDefined(connection.req.headers.authorization)) {
         events.required([
             `token:verify:${connection.req.headers.authorization}`
@@ -147,7 +109,7 @@ events.on('route:/api/v1/:app/:id:get', (connection) => {
     }
 });
 
-events.on('route:/api/v1/:app/:id:put', (connection) => {
+events.on('route:/:app/:id:put', (connection) => {
     events.required([
         `token:verify:${connection.req.headers.authorization}`
         , `data:set:${connection.params.app}:${connection.params.id}`
@@ -187,7 +149,7 @@ events.on('route:/api/v1/:app/:id:put', (connection) => {
     events.emit('data:get', connection.params);
 });
 
-events.on('route:/api/v1/:app/:id:delete', (connection) => {
+events.on('route:/:app/:id:delete', (connection) => {
     if (isDefined(connection.req.headers.authorization)) {
         events.required([
             `token:verify:${connection.req.headers.authorization}`
@@ -222,7 +184,7 @@ events.on('route:/api/v1/:app/:id:delete', (connection) => {
     }
 });
 
-events.on('route:/api/v1/:app:report', (connection) => {
+events.on('route:/:app:report', (connection) => {
     if (isDefined(connection.req.headers.authorization)){
         events.once(`token:verify:${connection.req.headers.authorization}`, (valid) => {
             if (valid && valid.app === connection.params.app){

@@ -2,7 +2,7 @@
 'use strict';
 
 const assert = require('chai').assert
-    , utils = require('./utils');
+    , utils = require('./index');
 
 describe('Utils Tests', () => {
     describe('Format Date Strings', () => {
