@@ -5,5 +5,5 @@
 	"/api/v1/:app/:id": ["get", "put", "delete"],
 	"/templates": ["get"],
 	"/about": ["get"],
-    "/loaderio-a965750d0b14924648d4a814f35c567a": ["get"]
+    "/loaderio-1b3b503e8a877429e0f6cbd83baf0475": ["get"]
 }
