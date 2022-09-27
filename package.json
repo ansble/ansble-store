@@ -5,9 +5,9 @@
   "main": "app.js",
   "dependencies": {
     "bower": "^1.5.3",
-    "jsonwebtoken": "^5.4.0",
-    "mongodb": "^2.0.45",
-    "monument": "2.2.0-rc.1",
+    "jsonwebtoken": "^7.4.1",
+    "mongodb": "^3.1.13",
+    "monument": "2.2.1",
     "sandbox": "^0.8.6"
   },
   "devDependencies": {
